@@ -1,0 +1,27 @@
+libunwrap: phase unwrapping library
+==============================================================================
+
+libunwrap is a library to unwrap phases using various algorithms. The core is
+written in C with bindings for Octave and Python.
+
+The latest version is available at http://github.com/tvwerkhoven/libunwrap/
+
+This library is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.
+
+Installation
+============
+
+To install the libraries, please read the INSTALL files in the respective
+directories for Python and Octave.
+
+Algorithms
+==========
+
+The algorithms supplied include:
+
+- Flood unwrap
+- Itoh's algorithm
+- Weighed Itoh's algorithm
+

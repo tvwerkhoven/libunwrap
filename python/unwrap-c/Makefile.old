@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Compile
+libshifts-c.o: libshifts-c.c
+	gcc -ffast-math -O4 -g -c libshifts-c.c -I/sw/lib/python2.5/site-packages/numpy/core/include -I/sw/include/python2.5/ -Wall
+	#gcc -ffast-math -O4 -fPIC -g -c libshifts-c.c -I/home/tim/lib/python2.5/site-packages/numpy/core/include -I/home/tim/include/python2.5/ -Wall -lm -pthread
+
+# Link
+_libshifts.so: libshifts-c.o
+	gcc -L/sw/lib -bundle -undefined dynamic_lookup libshifts-c.o -o _libshifts.so -Wall
+	#gcc -L/home/tim/lib -shared libshifts-c.o -o _libshifts.so -Wall
+
+

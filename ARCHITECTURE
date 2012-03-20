@@ -1,0 +1,47 @@
+libunwrap architecture
+======================
+
+libunwrap is a C library for unwrapping phase, with bindings in Octave and Python (NumPy). This document gives an overview of the hierarchy of the code.
+
+C code
+======
+
+* Name: libunwrap
+
+* Hierarchy
+
+c/ -- C library root, includes configure and make files
+c/src/ -- stand-alone C unwrapping program (optional)
+c/unwrap/ -- main unwrap routines
+
+* Build process
+
+The C program can be built with autoconf / automake using configure.ac and Makefile.am's
+
+Octave code
+===========
+
+* Name: unwrap.m?
+
+* Hierarchy
+
+octave/ -- Octave code root
+
+* Build process
+
+TODO
+
+Python code
+===========
+
+* Name: unwrap.py
+
+* Hierarchy
+
+python/ -- Python root, include NumPy setup.py and other administrative files
+python/unwrap-c/ -- Python wrapper for libunwrap, written in C with NumPy extension
+python/unwrap/ -- pure Python unwrap library, wrapping unwrap-c
+
+* Build process
+
+The Python package is built using numpy.distutils, see setup.py for details. The ingredients for this are the C routines listed previously and the two Python wrappers (located in unwrap-c and unwrap) written in C and Python respectively.
