@@ -16,6 +16,10 @@ This is unwrap.py, a Python wrapper for phase unwrapping routines.
 # license versions 3.0 or higher, see
 # http://creativecommons.org/licenses/by-sa/3.0/
 
+# Importe C routines
+import unwrap_c
+# Use Numpy
+import numpy as N
 
 ## @brief Pure Python wrapper for C-Python library
 #
@@ -25,13 +29,13 @@ This is unwrap.py, a Python wrapper for phase unwrapping routines.
 # Available methods include:
 # - Itoh
 # - Floodfill
-def unwrap(phase, method="itoh")
+def unwrap(phase, method="itoh"):
 	print "unwrap(...)"
 
 	# Check method validity
 	val_meths = ['itoh', 'flood']
 	if (method.lower() not in val_meths):
-		raise ValueError("Invalid method, must be one of " + str(val_meths)).
+		raise ValueError("Invalid method, must be one of " + str(val_meths))
 
 	# Check phase dimension
 
