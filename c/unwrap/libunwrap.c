@@ -24,8 +24,8 @@
 
 // #define M_PI  3.141592653589793238462643383279502884197169399
 
+const double *g_pup      = NULL;
 double *g_wrapped  = NULL;
-double *g_pup      = NULL;
 double *g_donemask = NULL;
 double  g_borderlimitfrac = 0;
 long    g_count = 0;
