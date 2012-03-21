@@ -1,5 +1,5 @@
 /*
- unwrapflood.c -- Octave binding for libunwrap
+ unwrap_flood.c -- Octave binding for libunwrap
  Copyright (C) 2012 Visa Korkiakoski <korkiakoski@strw.leidenuniv.nl>
  
  This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ DEFUN_DLD(unwrap_qua, args, nargout,
 #endif
 
   // Start the recursive unwrapping
-  unwrap_quality(wrapped, qua, phdim);
+  unwrap_flood_quality(wrapped, qua, phdim);
 
   return octave_value(mxWrapped);
 } // unwrap_qua

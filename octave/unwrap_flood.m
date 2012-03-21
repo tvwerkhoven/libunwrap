@@ -47,7 +47,7 @@ for i1=1:itcount
   if exist('toplot', 'var')
     fprintf('start: %d, %d (totborders %d)\n', po1, po2, totborders)
   end
-  %unwrapflood(po1,po2, 0);
+  %unwrap_flood(po1,po2, 0);
   
   % Start the code
   if mod(i1,10) == 0
