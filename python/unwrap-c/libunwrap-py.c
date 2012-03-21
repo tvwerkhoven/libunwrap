@@ -28,16 +28,17 @@
 // Headers
 //
 
+#include <stdlib.h>
+
 #include <Python.h>				// For python extension
 #include <numpy/arrayobject.h> 	// For numpy
 //#include <Numeric/arrayobject.h> 	// For numpy
 //#include <numarray/arrayobject.h> 	// For numpy
-// #include <sys/time.h>			// For timestamps
-//#include <time.h>					// For timestamps
-//#include <math.h>					// For pow()
 
 #include "debugprint.h"
 #include "libunwrap-py.h"
+
+#include "libunwrap.h"
 
 //
 // Methods table for this module
@@ -68,46 +69,63 @@ static PyObject * libunwrap_helloworld(PyObject *self, PyObject *args) {
 }
 
 static PyObject *libunwrap_floodfill(PyObject *self, PyObject *args) {
-  PyArrayObject* phase;     // Wrappted input phase
-	int startx, starty;       // Starting coordinates
-  PyArrayObject *ret_phase; // Unwrapped output phase
+  PyArrayObject* phase;     // Wrapped input phase
+  PyArrayObject* qual;      // Quality map
   
+  PyObject *ph_unwrap_obj;
   //
-	// Parse arguments from Python function
+	// Parse arguments from Python function.
 	//
-	if (!PyArg_ParseTuple(args, "O!ii", 
+	if (!PyArg_ParseTuple(args, "O!O!", 
                         &PyArray_Type, &phase,    // Wrapped phase
-                        &startx,									// Start x-coordinate
-                        &starty                   // Start y-coordinate
+                        &PyArray_Type, &qual      // Quality map
                         )) {
-		PyErr_SetString(PyExc_SyntaxError, "In floodfill: failed to parse arguments.");
+		PyErr_SetString(PyExc_SyntaxError, "floodfill: failed to parse args.");
 		return NULL; 
   }
 
-  DEBUGPRINT("phase: 0x%p, start: %d,%d\n", phase, startx, starty);
- 
+  DEBUGPRINT("phase: 0x%p, qual: 0x%p\n", phase, qual);
+
+  // Inspect array dimensions
   int nd = PyArray_NDIM(phase);
-  if (nd != 2) {
-		PyErr_SetString(PyExc_RuntimeError, "In floodfill: can only work with 2-d phase.");
-		return NULL;
-  }
   int ph_w = (int) PyArray_DIM((PyObject*) phase, 0);
 	int ph_h = (int) PyArray_DIM((PyObject*) phase, 1);
 
+  
   DEBUGPRINT("#dim: %d, dims: %d, %d, size: %d\n", nd, ph_w, ph_h, ph_w*ph_h);
 
-  Py_INCREF(Py_None);
-  return Py_None; 
-//  // Build numpy vector from C array 'phase_uw', a 2-d array
-//	npy_intp s_dims[] = {512, 256};
-//	ret_phase = (PyArrayObject*) PyArray_SimpleNewFromData(4, s_dims, NPY_FLOAT32, (void *) phase_uw);
-//	PyArray_FLAGS(ret_phase) |= NPY_OWNDATA;
-//	
-//	if (!PyArray_CHKFLAGS(ret_phase, NPY_OWNDATA)) {
-//		PyErr_SetString(PyExc_RuntimeError, "In floodfill: unable to set dat ownership for 'phase_uw'.");
-//		free(ret_phase);
-//		return NULL;
-//  }
-//	
-//	return Py_BuildValue("{s:N,s:N}", "phase", ret_phase, "refapts", retreflist);  
+  if (ph_w != ph_h) {
+    PyErr_SetString(PyExc_RuntimeError, "In floodfill: need square input data.");
+    return NULL;
+  }
+
+  switch (PyArray_TYPE((PyObject *) phase)) {
+		case (NPY_FLOAT64): {
+      DEBUGPRINT("%s\n", "NPY_FLOAT64");
+
+      // Copy input phase to ensure contiguous memory
+			ph_unwrap_obj = PyArray_FROM_OTF((PyObject *) phase, NPY_DOUBLE, NPY_ENSURECOPY | NPY_OUT_ARRAY);
+      
+      // Make sure the quality map is well-behaved
+      PyObject *qual64_obj = PyArray_FROM_OTF((PyObject *) qual, NPY_DOUBLE, NPY_IN_ARRAY);
+      
+      // Get pointers to data
+      double *ph_uw = (double *) PyArray_DATA(ph_unwrap_obj);
+      double *qual64 = (double *) PyArray_DATA(qual64_obj);
+      
+      // Got data, call floodfill now
+      unwrap_quality(ph_uw, qual64, ph_w);
+      
+      // We don't need a quality map reference anymore
+      Py_DECREF(qual64_obj);
+			break;
+		}
+		default: {
+      DEBUGPRINT("%s\n", "unsupported type");
+			PyErr_SetString(PyExc_NotImplementedError, "In floodfill: datatype not supported.");
+			return NULL;
+		}
+	}
+  
+  return Py_BuildValue("N", ph_unwrap_obj);
 }
