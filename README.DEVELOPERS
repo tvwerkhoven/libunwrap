@@ -1,0 +1,10 @@
+libunwrap: phase unwrapping library
+==============================================================================
+
+These are some guidelines on writing code.
+
+* Indentation:
+
+C:      2 spaces
+Matlab: 2 spaces
+Python: tabs
