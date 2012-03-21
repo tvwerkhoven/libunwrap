@@ -41,10 +41,9 @@ int     g_usedonemask = 0;
 
 /*!
  @brief Try to make a floodfill unwrap.
-
- OBSOLETE!
-
  @author Visa Korkiakoski
+
+ This function is obsolete, please use unwrap_quality() instead.
 */
 void unwrapflood(int po1, int po2, int itco) 
 {  
@@ -109,14 +108,11 @@ void unwrapflood(int po1, int po2, int itco)
 
  TODO: add references to literature & publications.
 
+ @param ph [in, out] phase to be unwrapped -- this array will be modified
 
- @param ph  phase to be unwrapped -- this array will be modified
+ @param quality [in] quality array same size as phase. 0 means no phase information available, higher values indicate higher reliability
 
- @param quality quality array same size as phase. 0 means no phase
- information available, higher values indicate higher reliability
-
- @param phdim dimension of ph and quality. They are assumed to be
- square matrices.  .
+ @param phdim [in] dimension of ph and quality. They are assumed to be square matrices.
 */
 void unwrap_quality(double *ph, const double *quality, int phdim) 
 {
@@ -159,13 +155,13 @@ void unwrap_quality(double *ph, const double *quality, int phdim)
     // Check if some points need to be removed from the flooding border
     for (i1=neighbo1-1; i1<=neighbo1+1; i1++) {
       if (i1>=0 && i1 < phdim) {
-	for (i2=neighbo2-1; i2<=neighbo2+1; i2++) {
-	  if (i2>=0 && i2 < phdim) {
-	    // Removes a point from the flooding border, if the point
-	    // has no potential neighbors
-	    floodborder_remove(&uwd, quality, i1, i2);
-	  }
-	}
+        for (i2=neighbo2-1; i2<=neighbo2+1; i2++) {
+          if (i2>=0 && i2 < phdim) {
+            // Removes a point from the flooding border, if the point
+            // has no potential neighbors
+            floodborder_remove(&uwd, quality, i1, i2);
+          }
+        }
       }
     }    
 
@@ -211,12 +207,12 @@ double valineighs_getmean(int po1, int po2, double *ph, int *doneMask, int phdim
   for (i1=po1-1; i1<=po1+1; i1++) {
     if (i1>=0 && i1 < phdim) {
       for (i2=po2-1; i2<=po2+1; i2++) {
-	if (i2>=0 && i2 < phdim) {
-	  if (doneMask[i1 + i2*phdim] == 1) {
-	    meaval += ph[i1 + i2*phdim];
-	    inds ++;
-	  }	  
-	}
+        if (i2>=0 && i2 < phdim) {
+          if (doneMask[i1 + i2*phdim] == 1) {
+            meaval += ph[i1 + i2*phdim];
+            inds ++;
+          }
+        }
       }
     }
   }
@@ -275,13 +271,13 @@ void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int 
   for (i1=po1-1; i1<=po1+1; i1++) {
     if (i1>=0 && i1 < uwd->phdim) {
       for (i2=po2-1; i2<=po2+1; i2++) {
-	if (i2>=0 && i2 < uwd->phdim) {
-	  if (uwd->doneMask[i1 + i2*uwd->phdim] == 0 &&
-	      quality[i1 + i2*uwd->phdim] > 0) {
-	    unfinished = 1;
-	    break;
-	  }	  
-	}
+        if (i2>=0 && i2 < uwd->phdim) {
+          if (uwd->doneMask[i1 + i2*uwd->phdim] == 0 &&
+              quality[i1 + i2*uwd->phdim] > 0) {
+            unfinished = 1;
+            break;
+          }
+        }
       }
     }
   }
@@ -297,7 +293,6 @@ void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int 
     else
       uwd->borderListFirst = next;
 
-    
     // Mark this as non-used
     uwd->borderListPrevs[remIndex] = -1;
     uwd->borderListNexts[remIndex] = -1;
@@ -334,17 +329,17 @@ int floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality,
     // Enumerate neighbors
     for (i1=po1-1; i1<=po1+1; i1++) {
       if (i1>=0 && i1 < uwd->phdim) {
-	for (i2=po2-1; i2<=po2+1; i2++) {
-	  if (i2>=0 && i2 < uwd->phdim) {
-	    if (uwd->doneMask[i1 + i2*uwd->phdim] == 0 &&
-		quality[i1 + i2*uwd->phdim] > maxQuality) {
-	      maxQuality = quality[i1 + i2*uwd->phdim];
-	      *maxpo1 = i1;
-	      *maxpo2 = i2;
-	      maxi = i1 + i2*uwd->phdim;
-	    }	  
-	  }
-	}
+        for (i2=po2-1; i2<=po2+1; i2++) {
+          if (i2>=0 && i2 < uwd->phdim) {
+            if (uwd->doneMask[i1 + i2*uwd->phdim] == 0 &&
+          quality[i1 + i2*uwd->phdim] > maxQuality) {
+              maxQuality = quality[i1 + i2*uwd->phdim];
+              *maxpo1 = i1;
+              *maxpo2 = i2;
+              maxi = i1 + i2*uwd->phdim;
+            }	  
+          }
+        }
       }
     }
     
