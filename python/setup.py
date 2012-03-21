@@ -23,7 +23,7 @@ extlibs.append(Extension('unwrap_c',
 			define_macros =
 				[('MAJOR_VERSION', '0'),
 				('MINOR_VERSION', '1')],
-			include_dirs = [numpy.get_include()],
+			include_dirs = [numpy.get_include(), "../c/unwrap"],
 			libraries = ["m", "pthread"],
 			library_dirs = [],
 			extra_compile_args=["-O3", "-ffast-math", "-Wall", "-DHAVE_DEBUGPRINT"],
