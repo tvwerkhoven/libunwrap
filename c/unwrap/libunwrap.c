@@ -30,7 +30,7 @@
 #endif
 
 
-// These are used by unwrapflood
+// These are used by unwrap_flood()
 #define BORDERLIMITFRAC_DEFAULT 0.9
 const double *g_pup      = NULL;
 double *g_wrapped  = NULL;
@@ -87,7 +87,7 @@ void unwrap_flood(int po1, int po2, int itco)
             
             g_count++;
             
-            unwrapflood(curpo1, curpo2, itco+1);
+            unwrap_flood(curpo1, curpo2, itco+1);
           }	
         }
       }
