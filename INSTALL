@@ -1,0 +1,25 @@
+libunwrap installation
+==============================================================================
+
+libunwrap consists of three seperate parts: the core algorithms are written in C and two wrappers written in Matlab and Python.
+
+C library
+=========
+
+Currently no installation procedure. Test program can be compiled with custom Makefile in the c/test/ directory.
+
+Matlab wrapper
+==============
+
+Custom Makefile in matlab/ directory.
+
+Python wrapper
+==============
+
+The Python wrapper uses the default numpy.distutils installation procedure:
+
+$ ./setup.py build [opts]
+
+followed by 
+
+$ ./setup.py install [opts]

@@ -10,17 +10,9 @@ This library is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE.
 
-Installation
-============
-
-To install the libraries, please read the INSTALL files in the respective
-directories for Python and Octave.
-
 Algorithms
 ==========
 
 The algorithms supplied include:
 
-- Flood unwrap
-- Itoh's algorithm
-- Weighed Itoh's algorithm
+- Quality-guided flood unwrap
