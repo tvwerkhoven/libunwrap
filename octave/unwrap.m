@@ -55,7 +55,7 @@ for i1=1:itcount
   else
     usedonemask = 1;
   end
-  wrapped = unwrapflood(wrapped, pup, po1-1, po2-1, usedonemask, borderlimitfrac);
+  wrapped = unwrap_oct(wrapped, pup, po1-1, po2-1, usedonemask, borderlimitfrac);
 
   
   if po1last==po1 && po2last==po2

@@ -21,6 +21,17 @@
 #ifndef HAVE_LINBUNWRAP_H
 #define HAVE_LINBUNWRAP_H
 
+// Global variables
+extern const double *g_pup;
+extern double *g_wrapped;
+extern double *g_donemask;
+extern double  g_borderlimitfrac;
+extern long    g_count;
+extern long    g_phdim;
+extern int     g_usedonemask;
+
+
+
 void unwrapflood(int po1, int po2, int itco);
 
 #endif // HAVE_LINBUNWRAP_H
