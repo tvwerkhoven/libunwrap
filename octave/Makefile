@@ -7,11 +7,17 @@ CC_FLAGS=-O3
 
 INCLUDE=../c/unwrap
 
-all: unwrap_oct
+all: unwrap_flood  unwrap_qua
 
-unwrap_oct: $(OBJS)
 
-	mkoctfile unwrap_oct.cc ../c/unwrap/libunwrap.c -I$(INCLUDE)
+unwrap_flood: $(OBJS)
+
+	mkoctfile unwrap_flood.cc ../c/unwrap/libunwrap.c -I$(INCLUDE)
+
+unwrap_qua: $(OBJS)
+
+	mkoctfile unwrap_qua.cc ../c/unwrap/libunwrap.c -I$(INCLUDE)
+
 
 clean:
 	rm -f *.o core *.oct

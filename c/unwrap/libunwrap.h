@@ -21,7 +21,8 @@
 #ifndef HAVE_LINBUNWRAP_H
 #define HAVE_LINBUNWRAP_H
 
-// Global variables
+// Global variables -- they are used only by the obsolete flood
+// filling routine.
 extern const double *g_pup;
 extern double *g_wrapped;
 extern double *g_donemask;
@@ -31,7 +32,43 @@ extern long    g_phdim;
 extern int     g_usedonemask;
 
 
+/*!
+  Data structure used internally by the quality guided unwrapping.
+ */
+typedef struct {
+  /*! Mask counting the pixels that are already unwrapped  */
+  int  *doneMask; 
+  /*! Dimension of the phase.  */
+  int   phdim;
+
+  /*! Array contining indexes to the previous nodes in the list
+    linking the border pixels. Has same dimension as the phase.  */
+  int  *borderListPrevs;
+
+  /*! Array contining indexes to the next nodes in the list
+    linking the border pixels. Has same dimension as the phase. */
+  int  *borderListNexts;
+
+  /*! Index to the first node in the list linking the border pixels. */
+  int   borderListFirst;
+  
+} unwrapqdata_t;
+
+
 
 void unwrapflood(int po1, int po2, int itco);
+
+void unwrap_quality(double *ph, const double *quality, int phdim);
+
+// These functions are used internally 
+int findmax(const double *arr, int len);
+double valineighs_getmean(int po1, int po2, double *ph, int *doneMask, int phdim);
+void floodborder_add(unwrapqdata_t *uwd, int po1, int po2);
+void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int po2);
+int floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
+				int *maxpo1, int *maxpo2);
+
+
+
 
 #endif // HAVE_LINBUNWRAP_H
