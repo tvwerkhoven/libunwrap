@@ -19,7 +19,7 @@ except:
 
 # Setup extension module for C stuff
 extlibs = []
-extlibs.append(Extension('unwrap',
+extlibs.append(Extension('unwrap_c',
 			define_macros =
 				[('MAJOR_VERSION', '0'),
 				('MINOR_VERSION', '1')],
@@ -28,7 +28,8 @@ extlibs.append(Extension('unwrap',
 			library_dirs = [],
 			extra_compile_args=["-O3", "-ffast-math", "-Wall"],
 			extra_link_args=None,
-			sources = ['../c/libunwrap.c', '../c/libunwrap.h']))
+			sources = ['unwrap-c/libunwrap-py.c', 'unwrap-c/libunwrap-py.h',
+			'../c/unwrap/libunwrap.c', '../c/unwrap/libunwrap.h']))
 
 # Setup
 setup(name = 'unwrap',
