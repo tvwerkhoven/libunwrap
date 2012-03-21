@@ -31,8 +31,6 @@ import unittest
 # - Itoh
 # - Floodfill
 def unwrap(phase, method="itoh", *args):
-	print "unwrap(...)"
-
 	# Check method validity
 	val_meths = ['itoh', 'flood']
 	if (method.lower() not in val_meths):
@@ -43,13 +41,19 @@ def unwrap(phase, method="itoh", *args):
 
 	# Check method and call function
 	if (method == 'flood'):
-		return unwrap_c.floodfill(phase, args)
+		return floodfill(phase, *args)
 	elif (method == 'itoh'):
-		return
+		return phase
+	else:
+		return phase
 
-	# Return results
+## @brief Floodfill phase unwrapping
+#
+def floodfill(phase, startx=0, starty=0):
+	# Check sanity of phase
+	__check_sanity(phase)
 
-	return
+	return unwrap_c.floodfill(phase, startx, starty)
 
 ## @brief Check if phase seems ok
 #
@@ -65,6 +69,7 @@ class TestSanityCheck(unittest.TestCase):
 	def setUp(self):
 		"""Generate fake phase"""
 		self.sz = (257, 509)
+		self.val_meths = ['itoh', 'flood']
 		grid = N.indices(self.sz) / N.r_[self.sz].reshape(-1,1,1)
 		# Random phase
 		self.phase = N.sin(grid[0] * N.pi * 2)*3. + N.cos(grid[1] * N.pi * 8)*4.
@@ -73,21 +78,23 @@ class TestSanityCheck(unittest.TestCase):
 
 	# Shallow function tests
 	def test0b_sanity(self):
-		"""Test __check_sanity() deeper"""
+		"""Test __check_sanity()"""
 		self.assertRaisesRegexp(ValueError, 'Phase should be 2-dimensional.',
                         unwrap, N.arange(100.0))
 		self.assertRaisesRegexp(ValueError, 'Phase should be on of.*',
                         unwrap, N.arange(100).reshape(10,10))
 
 	def test0c_unwrap(self):
-		"""Test unwrap methods"""
+		"""Test unwrap methods check"""
 		self.assertRaisesRegexp(ValueError, 'Invalid method.*',
                         unwrap, N.arange(100.0), 'invalid')
 
-	def test2a(self):
-		"""Test unwrap methods"""
-		test_uw = unwrap(self.phase)
-		self.
+	def test1a(self):
+		"""Testing unwrapped unwrapping (dummy run)"""
+		for m in self.val_meths:
+			test_uw = unwrap(self.phase, method=m)
+			self.assertTrue(N.allclose(test_uw, self.phase))
+
 
 # This must be the final part of the file, code after this won't be executed
 if __name__ == "__main__":
