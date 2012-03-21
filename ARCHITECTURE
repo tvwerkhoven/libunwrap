@@ -29,7 +29,7 @@ octave/ -- Octave code root
 
 * Build process
 
-TODO
+Custom Makefile
 
 Python code
 ===========
