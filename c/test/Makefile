@@ -3,7 +3,7 @@ CC=gcc
 
 #CC_FLAGS=-O3
 CC_FLAGS=-Wall #-O3
-DEBUGFLAGS=-ggdb
+DEBUGFLAGS=-ggdb -DHAVE_DEBUG
 CC_FLAGS_BONUS=-std=c99
 
 #INCLUDE=../c/unwrap
