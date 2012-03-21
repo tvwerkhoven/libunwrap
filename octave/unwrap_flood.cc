@@ -34,11 +34,14 @@ extern "C"
 
 
 /*!
- @brief Octave interface for the unwrapping library.
+ @brief Octave interface for the floodfill unwrapping routine. 
+ 
+ OBSOLETE!
+
  @author Visa Korkiakoski
 */
-DEFUN_DLD(unwrap_oct, args, nargout, 
-	  "unwrap_oct phase pup po1 po2 usedonemask borderlimitfrac")
+DEFUN_DLD(unwrap_flood, args, nargout, 
+	  "unwrapped = unwrap_flood(phase, pup, po1, po2, usedonemask, borderlimitfrac)")
 {
   const double  *phsm;
   int            po1, po2;
@@ -134,4 +137,4 @@ DEFUN_DLD(unwrap_oct, args, nargout,
   unwrapflood(po1, po2, 0);
 
   return octave_value(mxWrapped);
-} // unwrap_oct
+}

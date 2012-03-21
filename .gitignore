@@ -1,7 +1,13 @@
 
-# Personal trash bin
+# Personal trash bins
 bashibaa
+paskaa.c
 
+# Binaries
+c/unwrap/test_unwrap
+
+*.mat
+*.raw
 *.o
 *.oct
 *~
