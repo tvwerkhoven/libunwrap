@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
   printf("Unwrapping...");
 
   // Do the recursive unwrap
-  unwrap_quality(wrapped, quality, phdim);
+  unwrap_flood_quality(wrapped, quality, phdim);
   
   // Save result
   stream = fopen(resname, "wb");
