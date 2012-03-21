@@ -178,7 +178,8 @@ void unwrap_flood_quality(double *ph, const double *quality, int phdim)
 
 
 /*!
-  Finds the index of maximum value in an array
+ @brief Finds the index of maximum value in an array
+ @author Visa Korkiakoski
  */
 int findmax(const double *arr, int len)
 {
@@ -196,15 +197,24 @@ int findmax(const double *arr, int len)
 
 
 /*!
-  @brief Finds the mean value of valid neighbors (doneMask is 1).
+ @brief Finds the mean value of neighbour points for which doneMask equals 1
+ @author Visa Korkiakoski
+  
+ @todo Document parameters
+ 
+ @param [in] po1 Coordinate to check (x)
+ @param [in] po2 Coordinate to check (y)
+ @param [in] *ph 2D phase information
+ @param [in] *doneMask 
+ @param [in] phdim Size of phase 
  */
 double valid_neighs_getmean(int po1, int po2, double *ph, int *doneMask, int phdim)
 {
   int    i1, i2, inds=0;
   double meaval=0;
 
- // Point is removed, if all the neighboring points are done, or if
-  // they contain no phase information.
+  // Loop over all neighbours of point (po1, po2). For all neighbours with 
+  // doneMask equal to 1, sum the values.
   for (i1=po1-1; i1<=po1+1; i1++) {
     if (i1>=0 && i1 < phdim) {
       for (i2=po2-1; i2<=po2+1; i2++) {
@@ -217,20 +227,22 @@ double valid_neighs_getmean(int po1, int po2, double *ph, int *doneMask, int phd
       }
     }
   }
+
+  // No valid neighbours found?
   if (inds==0) {
-    printf("INTERNAL ERROR.\n");
+    fprintf(stderr, "valid_neighs_getmean() INTERNAL ERROR.\n");
     return -1;
   }
   return ((double)meaval)/((double)inds);
 }
 
-
-
 /*!
   @brief  Adds a point to the floodborder.
-  @param uwd  unwrapping data structure
-  @param po1  point to add, 1st coordinate
-  @param po2  point to add, 2nd coordinate
+  @author Visa Korkiakoski
+
+  @param uwd [in, out] unwrapping data structure
+  @param po1 [in] point to add, 1st coordinate
+  @param po2 [in] point to add, 2nd coordinate
  */
 void floodborder_add(unwrapqdata_t *uwd, int po1, int po2)
 {
@@ -251,10 +263,12 @@ void floodborder_add(unwrapqdata_t *uwd, int po1, int po2)
 
 /*!
   @brief  Removes a point from the floodborder, if necessary.
-  @param uwd  unwrapping data structure
-  @param quality  quality array (the points where quality is 0, are considered done)
-  @param po1  point to remove, 1st coordinate
-  @param po2  point to remove, 2nd coordinate
+  @author Visa Korkiakoski
+
+  @param uwd [in, out] unwrapping data structure
+  @param quality [in] quality array (the points where quality is 0, are considered done)
+  @param po1 [in] point to add, 1st coordinate
+  @param po2 [in] point to add, 2nd coordinate
  */
 void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int po2)
 {
@@ -304,13 +318,13 @@ void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int 
 
 
 /*!
-  @brief Finds the maximum quality neighboring points of the
-  floodborder that are not marked by doneMask.
+  @brief Finds the maximum quality neighboring points of the floodborder that are not marked by doneMask.
+  @author Visa Korkiakoski
 
-  @param uwd  unwrapping data structure
-  @param quality  quality array
-  @param maxpo1  the point where quality is highest, 1st coordinate
-  @param maxpo2  the point where quality is highest, 2nd coordinate
+  @param uwd [in, out] unwrapping data structure
+  @param quality [in] quality array (the points where quality is 0, are considered done)
+  @param maxpo1 [in] the point where quality is highest, 1st coordinate
+  @param maxpo2 [in] the point where quality is highest, 2nd coordinate
   @return the index of (maxpo1, maxpo2), or -1 if no valid maximum is found
  */
 int floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
@@ -344,7 +358,6 @@ int floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality,
       }
     }
     
-
     // Take the next node
     curIndex = uwd->borderListNexts[curIndex];
   } // enumerate borderList nodes

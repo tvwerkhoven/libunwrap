@@ -31,27 +31,18 @@ extern long    g_count;
 extern long    g_phdim;
 extern int     g_usedonemask;
 
-
 /*!
   Data structure used internally by the quality guided unwrapping.
  */
 typedef struct {
-  /*! Mask counting the pixels that are already unwrapped  */
-  int  *doneMask; 
-  /*! Dimension of the phase.  */
-  int   phdim;
+  int  *doneMask;     //!< Mask counting the pixels that are already unwrapped 
+  int   phdim;        //!< Dimension of the phase
 
-  /*! Array contining indexes to the previous nodes in the list
-    linking the border pixels. Has same dimension as the phase.  */
-  int  *borderListPrevs;
+  int  *borderListPrevs; //!< Array contining indexes to the previous nodes in the list linking the border pixels. Has same dimension as the phase.
 
-  /*! Array contining indexes to the next nodes in the list
-    linking the border pixels. Has same dimension as the phase. */
-  int  *borderListNexts;
+  int  *borderListNexts; //!< Array contining indexes to the next nodes in the list linking the border pixels. Has same dimension as the phase
 
-  /*! Index to the first node in the list linking the border pixels. */
-  int   borderListFirst;
-  
+  int   borderListFirst; //!< Index to the first node in the list linking the border pixels. */
 } unwrapqdata_t;
 
 
@@ -66,8 +57,5 @@ void floodborder_add(unwrapqdata_t *uwd, int po1, int po2);
 void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int po2);
 int floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
 				int *maxpo1, int *maxpo2);
-
-
-
 
 #endif // HAVE_LINBUNWRAP_H
