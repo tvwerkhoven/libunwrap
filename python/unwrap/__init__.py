@@ -10,3 +10,6 @@ __version__ = "v0.0.1"
 ## @package unwrap
 # @brief Phase unwrapping package for Python
 # @author Tim van Werkhoven (werkhoven@strw.leidenuniv.nl)
+
+# Import everything to the current namespace
+from unwrap import *
