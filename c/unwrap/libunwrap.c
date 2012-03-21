@@ -46,7 +46,7 @@ int     g_usedonemask = 0;
 
  This function is obsolete, please use unwrap_quality() instead.
 */
-void unwrapflood(int po1, int po2, int itco) 
+void unwrap_flood(int po1, int po2, int itco) 
 {  
   int    i1, i2, itcolim;
   int    curpo1, curpo2;
@@ -93,7 +93,7 @@ void unwrapflood(int po1, int po2, int itco)
       }
     }
   }
-} // unwrapflood
+} // unwrap_flood(int po1, int po2, int itco) 
 
 
 /*!
@@ -115,7 +115,7 @@ void unwrapflood(int po1, int po2, int itco)
 
  @param phdim [in] dimension of ph and quality. They are assumed to be square matrices.
 */
-void unwrap_quality(double *ph, const double *quality, int phdim) 
+void unwrap_flood_quality(double *ph, const double *quality, int phdim) 
 {
   unwrapqdata_t  uwd = {0};
   int  i, i1, i2, maxi;
@@ -143,7 +143,7 @@ void unwrap_quality(double *ph, const double *quality, int phdim)
   while (floodborder_findmaxneighbor(&uwd, quality, &neighbo1, &neighbo2) >= 0) {
     
     // Is it necessary to wrap the neighboring point?
-    meaval = valineighs_getmean(neighbo1, neighbo2, ph, uwd.doneMask, phdim);
+    meaval = valid_neighs_getmean(neighbo1, neighbo2, ph, uwd.doneMask, phdim);
     thestep = meaval - ph[neighbo1+neighbo2*phdim];
     if (fabs(thestep) > M_PI) {
       ph[neighbo1 + phdim*neighbo2] += 2*M_PI*round(thestep/(2*M_PI));
@@ -173,7 +173,7 @@ void unwrap_quality(double *ph, const double *quality, int phdim)
   free(uwd.borderListPrevs);
   free(uwd.borderListNexts);
 
-} // unwrap_quality
+} // unwrap_flood_quality(double *ph, const double *quality, int phdim) 
 
 
 
@@ -198,7 +198,7 @@ int findmax(const double *arr, int len)
 /*!
   @brief Finds the mean value of valid neighbors (doneMask is 1).
  */
-double valineighs_getmean(int po1, int po2, double *ph, int *doneMask, int phdim)
+double valid_neighs_getmean(int po1, int po2, double *ph, int *doneMask, int phdim)
 {
   int    i1, i2, inds=0;
   double meaval=0;
