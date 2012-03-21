@@ -1,8 +1,8 @@
 %
-% Unwraps a phase
+% Unwraps a phase using obsolete floodfilling unwrapping routine.
+% OBSOLETE!
 %
-function unwrapped = unwrap(phsm, pup, toplot)
-%if 1==1
+function unwrapped = unwrap_flood(phsm, pup, toplot)
 
 borderlimitfrac=0.75;
 pupdim = size(pup,1);
