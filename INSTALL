@@ -44,3 +44,12 @@ $ ./setup.py build [opts]
 followed by 
 
 $ ./setup.py install [opts]
+
+Documentation
+=============
+
+All source code is annotated with Doxygen-formatted documentation. To extract this information, run doxygen in the docs/ directory:
+
+doc/ $ doxygen doxyfile
+
+This will then generate html, LaTeX and man documentation.
