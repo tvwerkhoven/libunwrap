@@ -1,4 +1,4 @@
-## @file test/Makefile.am
+## @file c/test/Makefile.am
 ## @author Tim van Werkhoven (werkhoven@strw.leidenuniv.nl)
 
 if WITH_TESTING

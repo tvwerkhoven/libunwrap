@@ -1,4 +1,4 @@
-## @file unwrap/Makefile.am
+## @file c/unwrap/Makefile.am
 ## @author Tim van Werkhoven (werkhoven@strw.leidenuniv.nl)
 
 include $(top_srcdir)/common.mk

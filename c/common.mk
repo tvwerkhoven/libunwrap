@@ -1,4 +1,4 @@
-## @file common.mk
+## @file c/common.mk
 ## @author Tim van Werkhoven (werkhoven@strw.leidenuniv.nl)
 ## Common makefile directives for all subdirs.
 

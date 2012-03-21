@@ -1,3 +1,6 @@
+## @file c/test/Makefile.old
+## @author Visa Korkiakoski (korkiakoski@strw.leidenuniv.nl)
+## Manual Makefile for test_unwrap
 
 CC=gcc
 

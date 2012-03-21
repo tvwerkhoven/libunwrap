@@ -1,4 +1,6 @@
 #!/bin/bash
+# @file unwrap-c/Makefile.old
+# @author Tim van Werkhoven (werkhoven@strw.leidenuniv.nl)
 
 # Compile
 libshifts-c.o: libshifts-c.c

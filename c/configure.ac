@@ -1,4 +1,4 @@
-## @file configure.ac
+## @file c/configure.ac
 ## @author Tim van Werkhoven (werkhoven@strw.leidenuniv.nl)
 ## Copyright 2012 Tim van Werkhoven (werkhoven@strw.leidenuniv.nl)
 
