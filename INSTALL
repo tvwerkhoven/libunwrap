@@ -6,7 +6,28 @@ libunwrap consists of three seperate parts: the core algorithms are written in C
 C library
 =========
 
-Currently no installation procedure. Test program can be compiled with custom Makefile in the c/test/ directory.
+The C library follows standard automake installation procedures. Although the source is included in the two wrappers automatically, and no manual compilation is required, one can still compile a test-routine to check things.
+
+To compile the test program, build the package as always. For the impatient:
+
+$ autoreconf -sfi
+$ ./configure
+$ make
+
+In more detail: first, generate the necessary files:
+
+$ autoreconf -sfi
+
+Next, inspect the possible configuration options, then run the configuration with the desired flags
+
+$ ./configure --help
+$ ./configure
+
+Finally, build the library and test program
+
+$ make
+
+The test program will be located under test/.
 
 Matlab wrapper
 ==============
