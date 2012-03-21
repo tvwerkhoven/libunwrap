@@ -45,6 +45,7 @@ class TestSanityCheck(unittest.TestCase):
 	def setUp(self):
 		"""Generate fake phase"""
 		self.sz = (257, 257)
+		self.verb = 2
 		grid = N.indices(self.sz, dtype=N.float) / N.r_[self.sz].reshape(-1,1,1)
 		# Random phase
 		self.phase = N.sin(grid[0] * N.pi * 2)*3. + N.cos(grid[1] * N.pi * 8)*4.
@@ -78,8 +79,8 @@ class TestSanityCheck(unittest.TestCase):
 	def test2a_flood_qual(self):
 		"""Testing quality guided floodfill unwrapping"""
 		test_uw = floodfill(self.phase_wr, self.qualmap)
-		if (not N.allclose(test_uw, self.phase)):
-			print self.phase
+		test_uw -= test_uw.mean()
+		if (self.verb > 1):
 			plt.figure()
 			plt.title("Original phase")
 			plt.imshow(self.phase)
