@@ -26,7 +26,7 @@ extlibs.append(Extension('unwrap_c',
 			include_dirs = [numpy.get_include()],
 			libraries = ["m", "pthread"],
 			library_dirs = [],
-			extra_compile_args=["-O3", "-ffast-math", "-Wall"],
+			extra_compile_args=["-O3", "-ffast-math", "-Wall", "-DHAVE_DEBUGPRINT"],
 			extra_link_args=None,
 			sources = ['unwrap-c/libunwrap-py.c', 'unwrap-c/libunwrap-py.h',
 			'../c/unwrap/libunwrap.c', '../c/unwrap/libunwrap.h']))
