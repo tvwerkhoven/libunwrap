@@ -110,35 +110,38 @@ void unwrap_flood(int po1, int po2, int itco)
  TODO: add references to literature & publications.
 
  @param ph [in, out] phase to be unwrapped -- this array will be modified
-
  @param quality [in] quality array same size as phase. 0 means no phase information available, higher values indicate higher reliability
-
- @param phdim [in] dimension of ph and quality. They are assumed to be square matrices.
+ @param phx [in] width of 'ph' and 'quality'
+ @param phy [in] height of 'ph' and 'quality'
 */
-void unwrap_flood_quality(double *ph, const double *quality, int phdim) 
+void unwrap_flood_quality(double *ph, const double *quality, size_t phx, size_t phy) 
 {
+DEBUGPRINT("ph: 0x%p, quality: 0x%p, phx: %ld, phy: %ld\n", ph, quality, phx, phy);
   unwrapqdata_t  uwd = {0};
-  int  i, i1, i2, maxi;
-  int neighbo1, neighbo2;
+  size_t i, i1, i2, maxi;
+  size_t neighx, neighy;
   double meaval, thestep;
 
-  uwd.phdim    = phdim;
-  uwd.doneMask = calloc(phdim*phdim, sizeof(int));
-  uwd.borderListPrevs = calloc(phdim*phdim, sizeof(int));
-  uwd.borderListNexts = calloc(phdim*phdim, sizeof(int));
+  uwd.phx    = phx;
+  uwd.phy    = phy;
+  uwd.nel    = phx * phy;
+  uwd.doneMask = calloc(phx*phy, sizeof( *(uwd.doneMask) ));
+  uwd.borderListPrevs = calloc(phx*phy, sizeof( *(uwd.borderListPrevs) ));
+  uwd.borderListNexts = calloc(phx*phy, sizeof( *(uwd.borderListPrevs) ));
   uwd.borderListFirst = -1; // No border
-  for (i=0; i<phdim*phdim; i++) {
+  for (i=0; i<phx*phy; i++) {
     uwd.borderListPrevs[i] = -1; // point to nil
     uwd.borderListNexts[i] = -1; // point to nil
   }
     
-  
   // First starting point
-  maxi = findmax(quality, phdim*phdim);
+  maxi = findmax(quality, phx * phy);
   uwd.doneMask[maxi] = 1;
-  neighbo1 = maxi % phdim;
-  neighbo2 = maxi / phdim;
-  floodborder_add(&uwd, neighbo1, neighbo2);
+  neighx = maxi % phx;
+  neighy = maxi / phy;
+DEBUGPRINT("found maximum at %ld, or (%ld, %ld)\n", maxi, neighx, neighy);
+  
+  floodborder_add(&uwd, neighx, neighy);
   
   while (floodborder_findmaxneighbor(&uwd, quality, &neighbo1, &neighbo2) >= 0) {
     
@@ -181,10 +184,10 @@ void unwrap_flood_quality(double *ph, const double *quality, int phdim)
  @brief Finds the index of maximum value in an array
  @author Visa Korkiakoski
  */
-int findmax(const double *arr, int len)
+int findmax(const double *arr, size_t len)
 {
   double maxval=arr[0];
-  int i, maxi=0;
+  size_t i, maxi=0;
   for (i=1; i<len; i++) {
     if (arr[i] > maxval) {
       maxval = arr[i];
@@ -244,9 +247,10 @@ double valid_neighs_getmean(int po1, int po2, double *ph, int *doneMask, int phd
   @param po1 [in] point to add, 1st coordinate
   @param po2 [in] point to add, 2nd coordinate
  */
-void floodborder_add(unwrapqdata_t *uwd, int po1, int po2)
+void floodborder_add(unwrapqdata_t *uwd, size_t pox, size_t poy)
 {
-  int newIndex = po1+po2*uwd->phdim;
+  // Convert to one-dimensional index
+  size_t newIndex = pox + poy * uwd->phx;
 
   if (uwd->borderListFirst >= 0) {
     uwd->borderListPrevs[ uwd->borderListFirst ] = newIndex;
@@ -256,7 +260,7 @@ void floodborder_add(unwrapqdata_t *uwd, int po1, int po2)
   uwd->borderListPrevs[newIndex] = -1; // this is the first
   
   // The added item is first at the list
-  uwd->borderListFirst = newIndex;
+  uwd->borderListFirst = newIndex
 } // floodborder_add
 
 
@@ -270,35 +274,32 @@ void floodborder_add(unwrapqdata_t *uwd, int po1, int po2)
   @param po1 [in] point to add, 1st coordinate
   @param po2 [in] point to add, 2nd coordinate
  */
-void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int po2)
+void floodborder_remove(unwrapqdata_t *uwd, const double *quality, size_t pox, size_t poy)
 {
-  int i1, i2;
+  size_t i1, i2;
   int unfinished=0;
-  int remIndex = po1 + po2*uwd->phdim;
+  
+  // Convert to one-dimensional index
+  size_t remIndex = pox + poy * uwd->phx;
 
-  // Is point (po1, po2) included in the borderList?
+  // Is point (pox, poy) included in the borderList?
   if (uwd->borderListNexts[remIndex] < 0 &&  uwd->borderListPrevs[remIndex] < 0)
     return; // no, it isn't  (or it is just the sole remaining)
 
-
   // Point is removed, if all the neighboring points are done, or if
   // they contain no phase information.
-  for (i1=po1-1; i1<=po1+1; i1++) {
-    if (i1>=0 && i1 < uwd->phdim) {
-      for (i2=po2-1; i2<=po2+1; i2++) {
-        if (i2>=0 && i2 < uwd->phdim) {
-          if (uwd->doneMask[i1 + i2*uwd->phdim] == 0 &&
-              quality[i1 + i2*uwd->phdim] > 0) {
-            unfinished = 1;
-            break;
-          }
-        }
+  for (i1 = max(0, pox-1); i1<=min(pox+1, uwd->phx); i1++) {
+    for (i2 = max(0, poy-1); i2<=min(poy+1, uwd->phy); i2++) {
+      if (uwd->doneMask[i1 + i2*uwd->phx] == 0 &&
+          quality[i1 + i2*uwd->phx] > 0) {
+        unfinished = 1;
+        break;
       }
     }
   }
   if (unfinished == 0) {
-    int prev = uwd->borderListPrevs[remIndex];
-    int next = uwd->borderListNexts[remIndex];
+    size_t prev = uwd->borderListPrevs[remIndex];
+    size_t next = uwd->borderListNexts[remIndex];
 
     if (next >= 0)
       uwd->borderListPrevs[next] = prev;
@@ -328,32 +329,28 @@ void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int 
   @return the index of (maxpo1, maxpo2), or -1 if no valid maximum is found
  */
 int floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
-				int *maxpo1, int *maxpo2)
+				size_t *maxpo1, size_t *maxpo2)
 {
-  int     curIndex = uwd->borderListFirst;
-  int     po1, po2, i1, i2, maxi=-1;
+  size_t  curIndex = uwd->borderListFirst;
+  size_t  po1, po2, i1, i2, maxi=-1;
   double  maxQuality = -1;
 
   // Go through all the neighbors of the borderList
   while (curIndex >= 0) {
     // Compute the coordinates corresponding to the index
-    po1 = curIndex % uwd->phdim;
-    po2 = curIndex / uwd->phdim;
+    po1 = curIndex % uwd->phx;
+    po2 = curIndex / uwd->phx;
 
 
     // Enumerate neighbors
-    for (i1=po1-1; i1<=po1+1; i1++) {
-      if (i1>=0 && i1 < uwd->phdim) {
-        for (i2=po2-1; i2<=po2+1; i2++) {
-          if (i2>=0 && i2 < uwd->phdim) {
-            if (uwd->doneMask[i1 + i2*uwd->phdim] == 0 &&
-          quality[i1 + i2*uwd->phdim] > maxQuality) {
-              maxQuality = quality[i1 + i2*uwd->phdim];
-              *maxpo1 = i1;
-              *maxpo2 = i2;
-              maxi = i1 + i2*uwd->phdim;
-            }	  
-          }
+    for (i1=max(0, po1-1); i1<=min(po1+1, uwd->phx); i1++) {
+      for (i2=max(0, po2-1); i2<=min(po2+1, uwd->phy); i2++) {
+        if (uwd->doneMask[i1 + i2*uwd->phx] == 0 &&
+            quality[i1 + i2*uwd->phx] > maxQuality) {
+          maxQuality = quality[i1 + i2*uwd->phx];
+          *maxpo1 = i1;
+          *maxpo2 = i2;
+          maxi = i1 + i2*uwd->phx;
         }
       }
     }

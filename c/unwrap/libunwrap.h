@@ -36,19 +36,21 @@ extern int     g_usedonemask;
  */
 typedef struct {
   int  *doneMask;     //!< Mask counting the pixels that are already unwrapped 
-  int   phdim;        //!< Dimension of the phase
+  size_t phx;         //!< Width of the phase
+  size_t phy;         //!< Height of the phase
+  size_t nel;         //!< Number of pixels in phasemap
 
-  int  *borderListPrevs; //!< Array contining indexes to the previous nodes in the list linking the border pixels. Has same dimension as the phase.
+  size_t  *borderListPrevs; //!< Array contining indexes to the previous nodes in the list linking the border pixels. Has same dimension as the phase.
 
-  int  *borderListNexts; //!< Array contining indexes to the next nodes in the list linking the border pixels. Has same dimension as the phase
+  size_t  *borderListNexts; //!< Array contining indexes to the next nodes in the list linking the border pixels. Has same dimension as the phase
 
-  int   borderListFirst; //!< Index to the first node in the list linking the border pixels. */
+  size_t   borderListFirst; //!< Index to the first node in the list linking the border pixels. */
 } unwrapqdata_t;
 
 
 void unwrap_flood(int po1, int po2, int itco);
 
-void unwrap_flood_quality(double *ph, const double *quality, int phdim);
+void unwrap_flood_quality(double *ph, const double *quality, int phx, int phy) 
 
 // These functions are used internally 
 int findmax(const double *arr, int len);
