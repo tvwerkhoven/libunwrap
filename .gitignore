@@ -8,6 +8,36 @@ c/unwrap/test_unwrap
 
 *.mat
 *.raw
-*.o
 *.oct
+
+# automake temp files
+*.in
+config.*
+configure
+Makefile
+aclocal.m4
+build-aux/
+autom4te.cache/
+
+# ignore objects and archives, anywhere in the tree.
+*.[oa]
+*.l[oa]
+*.so.*
+*.pyc
+*.dylib
 *~
+*lo
+*mo
+
+# Generated files
+docs/html/
+docs/latex/
+docs/man/
+
+c/unwrap/.deps/
+c/unwrap/autoconfig.h
+c/unwrap/stamp-h1
+
+c/test/.deps/
+c/test/unwrap-test
+
