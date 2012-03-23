@@ -5,7 +5,7 @@ if WITH_TESTING
 
 include $(top_srcdir)/common.mk
 
-AM_CFLAGS += -I${top_srcdir}/unwrap/ -L${top_srcdir}/unwrap/
+AM_CXXFLAGS += -I${top_srcdir}/unwrap/ -L${top_srcdir}/unwrap/
 
 noinst_PROGRAMS = unwrap-test
 

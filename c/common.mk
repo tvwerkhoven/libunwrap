@@ -17,11 +17,11 @@ AM_CPPFLAGS += -D__STDC_FORMAT_MACROS \
 #LDADD = $(COMMON_LIBS)
 
 # More error reporting during compilation
-AM_CFLAGS = -Wall -Wextra -Wfatal-errors
+AM_CXXFLAGS = -Wall -Wextra -Wfatal-errors
 
 ### Debug options
 if HAVE_DEBUG
-AM_CFLAGS += -ggdb -g3 -O0 -fno-inline
+AM_CXXFLAGS += -ggdb -g3 -O0 -fno-inline
 else
-AM_CFLAGS += -O3 -ftree-vectorize
+AM_CXXFLAGS += -O3 -ftree-vectorize
 endif
