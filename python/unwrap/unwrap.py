@@ -24,12 +24,12 @@ import unittest
 
 ## @brief Quality-guided floodfill phase unwrapping
 #
-def floodfill(phase, quality):
+def flood_quality(phase, quality):
 	# Check sanity of phase & quality
 	__check_sanity(phase)
 	__check_sanity(quality)
 
-	return unwrap_c.floodfill(phase, quality)
+	return unwrap_c.flood_quality(phase, quality)
 
 ## @brief Check if a map seems ok
 #
@@ -44,7 +44,7 @@ def __check_sanity(data, ndim=2, dtlist=[N.float]):
 class TestSanityCheck(unittest.TestCase):
 	def setUp(self):
 		"""Generate fake phase"""
-		self.sz = (257, 257)
+		self.sz = (257, 367)
 		self.verb = 2
 		grid = N.indices(self.sz, dtype=N.float) / N.r_[self.sz].reshape(-1,1,1)
 		# Random phase
@@ -67,18 +67,18 @@ class TestSanityCheck(unittest.TestCase):
 	def test0b_sanity(self):
 		"""Test __check_sanity()"""
 		self.assertRaisesRegexp(ValueError, '.*should be 2-dimensional.',
-                        floodfill, N.arange(100.0), N.arange(100.0))
+                        flood_quality, N.arange(100.0), N.arange(100.0))
 		self.assertRaisesRegexp(ValueError, '.*should be on of.*',
-                        floodfill, N.arange(100).reshape(10,10), N.arange(100).reshape(10,10))
+                        flood_quality, N.arange(100).reshape(10,10), N.arange(100).reshape(10,10))
 
 	def test1a_flood_dummy(self):
 		"""Testing unwrapped unwrapping (dummy run)"""
-		test_uw = floodfill(self.phase, self.qualmap)
+		test_uw = flood_quality(self.phase, self.qualmap)
 		self.assertAlmostEqual(test_uw.sum(), self.phase.sum())
 
 	def test2a_flood_qual(self):
 		"""Testing quality guided floodfill unwrapping"""
-		test_uw = floodfill(self.phase_wr, self.qualmap)
+		test_uw = flood_quality(self.phase_wr, self.qualmap)
 		test_uw -= test_uw.mean()
 		if (self.verb > 1):
 			plt.figure()
