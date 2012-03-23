@@ -50,14 +50,18 @@ typedef struct {
 
 void unwrap_flood(int po1, int po2, int itco);
 
-void unwrap_flood_quality(double *ph, const double *quality, int phx, int phy) 
+void unwrap_flood_quality(double *ph, const double *quality, size_t phx, size_t phy);
 
 // These functions are used internally 
-int findmax(const double *arr, int len);
-double valid_neighs_getmean(int po1, int po2, double *ph, int *doneMask, int phdim);
-void floodborder_add(unwrapqdata_t *uwd, int po1, int po2);
-void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int po2);
-int floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
-				int *maxpo1, int *maxpo2);
+size_t findmax(const double *arr, size_t len);
+
+double valid_neighs_getmean(size_t po1, size_t po2, const double * const ph, const int * const doneMask, size_t phx, size_t phy);
+
+void floodborder_add(unwrapqdata_t *uwd, size_t pox, size_t poy);
+
+void floodborder_remove(unwrapqdata_t *uwd, const double *quality, size_t pox, size_t poy);
+
+size_t floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
+                                   size_t *maxpo1, size_t *maxpo2);
 
 #endif // HAVE_LINBUNWRAP_H
