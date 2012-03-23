@@ -122,17 +122,18 @@ void unwrap_flood(int po1, int po2, int itco)
 void unwrap_flood_quality(double *ph, const double *quality, size_t phx, size_t phy) 
 {
 DEBUGPRINT("ph: 0x%p, quality: 0x%p, phx: %ld, phy: %ld\n", ph, quality, phx, phy);
-  unwrapqdata_t  uwd = {0};
-  size_t i, i1, i2, maxi;
-  size_t neighx, neighy;
-  double meaval, thestep;
+  unwrapqdata_t uwd = {0};
+  size_t  i, i1, i2;
+  ssize_t maxi;
+  size_t  neighx, neighy;
+  double  meaval, thestep;
 
   uwd.phx    = phx;
   uwd.phy    = phy;
   uwd.nel    = phx * phy;
   uwd.doneMask = (int *) calloc(phx*phy, sizeof( *(uwd.doneMask) ));
-  uwd.borderListPrevs = (size_t *) calloc(phx*phy, sizeof( *(uwd.borderListPrevs) ));
-  uwd.borderListNexts = (size_t *) calloc(phx*phy, sizeof( *(uwd.borderListPrevs) ));
+  uwd.borderListPrevs = (ssize_t *) calloc(phx*phy, sizeof( *(uwd.borderListPrevs) ));
+  uwd.borderListNexts = (ssize_t *) calloc(phx*phy, sizeof( *(uwd.borderListPrevs) ));
   uwd.borderListFirst = -1; // No border
   for (i=0; i<phx*phy; i++) {
     uwd.borderListPrevs[i] = -1; // point to nil
@@ -199,8 +200,6 @@ size_t findmax(const double *arr, size_t len)
   return maxi;
 } // findmax
 
-
-
 /*!
  @brief Finds the mean value of neighbour points for which doneMask equals 1
  @author Visa Korkiakoski
@@ -215,13 +214,13 @@ size_t findmax(const double *arr, size_t len)
  */
 double valid_neighs_getmean(size_t po1, size_t po2, const double * const ph, const int * const doneMask, size_t phx, size_t phy)
 {
-  size_t i1, i2, inds=0;
-  double meaval=0;
+  size_t inds = 0;
+  double meaval = 0.0;
 
   // Loop over all neighbours of point (po1, po2). For all neighbours with 
   // doneMask equal to 1, sum the values.
-  for (i1=max(size_t(1), po1)-1; i1<=min(po1+1, phx); i1++) {
-    for (i2=max(size_t(1), po2)-1; i2<=min(po2+1, phy); i2++) {
+  for (size_t i1 = max(size_t(1), po1)-1; i1<=min(po1+1, phx); i1++) {
+    for (size_t i2 = max(size_t(1), po2)-1; i2<=min(po2+1, phy); i2++) {
       if (doneMask[i1 + i2*phx] == 1) {
         meaval += ph[i1 + i2*phx];
         inds++;
@@ -230,7 +229,7 @@ double valid_neighs_getmean(size_t po1, size_t po2, const double * const ph, con
   }
 
   // No valid neighbours found?
-  if (inds==0) {
+  if (inds == 0) {
     fprintf(stderr, "valid_neighs_getmean() INTERNAL ERROR.\n");
     return -1;
   }
@@ -274,8 +273,7 @@ void floodborder_add(unwrapqdata_t *uwd, size_t pox, size_t poy)
  */
 void floodborder_remove(unwrapqdata_t *uwd, const double *quality, size_t pox, size_t poy)
 {
-  size_t i1, i2;
-  int unfinished=0;
+  int unfinished = 0;
   
   // Convert to one-dimensional index
   size_t remIndex = pox + poy * uwd->phx;
@@ -286,8 +284,8 @@ void floodborder_remove(unwrapqdata_t *uwd, const double *quality, size_t pox, s
 
   // Point is removed, if all the neighboring points are done, or if
   // they contain no phase information.
-  for (i1 = max(size_t(1), pox)-1; i1<=min(pox+1, uwd->phx); i1++) {
-    for (i2 = max(size_t(1), poy)-1; i2<=min(poy+1, uwd->phy); i2++) {
+  for (size_t i1 = max(size_t(1), pox)-1; i1<=min(pox+1, uwd->phx); i1++) {
+    for (size_t i2 = max(size_t(1), poy)-1; i2<=min(poy+1, uwd->phy); i2++) {
       if (uwd->doneMask[i1 + i2*uwd->phx] == 0 &&
           quality[i1 + i2*uwd->phx] > 0) {
         unfinished = 1;
@@ -296,8 +294,8 @@ void floodborder_remove(unwrapqdata_t *uwd, const double *quality, size_t pox, s
     }
   }
   if (unfinished == 0) {
-    size_t prev = uwd->borderListPrevs[remIndex];
-    size_t next = uwd->borderListNexts[remIndex];
+    ssize_t prev = uwd->borderListPrevs[remIndex];
+    ssize_t next = uwd->borderListNexts[remIndex];
 
     if (next >= 0)
       uwd->borderListPrevs[next] = prev;
@@ -326,11 +324,12 @@ void floodborder_remove(unwrapqdata_t *uwd, const double *quality, size_t pox, s
   @param maxpo2 [in] the point where quality is highest, 2nd coordinate
   @return the index of (maxpo1, maxpo2), or -1 if no valid maximum is found
  */
-size_t floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
+ssize_t floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
 				size_t *maxpo1, size_t *maxpo2)
 {
-  size_t  curIndex = uwd->borderListFirst;
-  size_t  po1, po2, i1, i2, maxi=-1;
+  ssize_t curIndex = uwd->borderListFirst;
+  size_t  po1, po2;
+  ssize_t maxi = -1;
   double  maxQuality = -1;
 
   // Go through all the neighbors of the borderList
@@ -339,10 +338,9 @@ size_t floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality,
     po1 = curIndex % uwd->phx;
     po2 = curIndex / uwd->phx;
 
-
     // Enumerate neighbors
-    for (i1=max(size_t(1), po1)-1; i1<=min(po1+1, uwd->phx); i1++) {
-      for (i2=max(size_t(1), po2)-1; i2<=min(po2+1, uwd->phy); i2++) {
+    for (size_t i1 = max(size_t(1), po1)-1; i1<=min(po1+1, uwd->phx); i1++) {
+      for (size_t i2 = max(size_t(1), po2)-1; i2<=min(po2+1, uwd->phy); i2++) {
         if (uwd->doneMask[i1 + i2*uwd->phx] == 0 &&
             quality[i1 + i2*uwd->phx] > maxQuality) {
           maxQuality = quality[i1 + i2*uwd->phx];

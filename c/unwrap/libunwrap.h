@@ -40,11 +40,11 @@ typedef struct {
   size_t phy;         //!< Height of the phase
   size_t nel;         //!< Number of pixels in phasemap
 
-  size_t  *borderListPrevs; //!< Array contining indexes to the previous nodes in the list linking the border pixels. Has same dimension as the phase.
+  ssize_t *borderListPrevs; //!< Array contining indexes to the previous nodes in the list linking the border pixels. Has same dimension as the phase.
 
-  size_t  *borderListNexts; //!< Array contining indexes to the next nodes in the list linking the border pixels. Has same dimension as the phase
+  ssize_t *borderListNexts; //!< Array contining indexes to the next nodes in the list linking the border pixels. Has same dimension as the phase
 
-  size_t   borderListFirst; //!< Index to the first node in the list linking the border pixels. */
+  ssize_t  borderListFirst; //!< Index to the first node in the list linking the border pixels. */
 } unwrapqdata_t;
 
 
@@ -61,7 +61,7 @@ void floodborder_add(unwrapqdata_t *uwd, size_t pox, size_t poy);
 
 void floodborder_remove(unwrapqdata_t *uwd, const double *quality, size_t pox, size_t poy);
 
-size_t floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
+ssize_t floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
                                    size_t *maxpo1, size_t *maxpo2);
 
 #endif // HAVE_LINBUNWRAP_H
