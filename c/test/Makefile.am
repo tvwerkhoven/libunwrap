@@ -9,7 +9,7 @@ AM_CFLAGS += -I${top_srcdir}/unwrap/ -L${top_srcdir}/unwrap/
 
 noinst_PROGRAMS = unwrap-test
 
-unwrap_test_SOURCES = test_unwrap.c
+unwrap_test_SOURCES = test_unwrap.cc
 unwrap_test_LDADD = ${top_srcdir}/unwrap/libunwrap.a \
     $(LDADD)
 

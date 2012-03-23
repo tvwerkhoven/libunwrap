@@ -39,18 +39,18 @@ int main(int argc, char *argv[])
 {
   char   *fname, *qualname, *resname;
   FILE   *stream;
-  long    fsize, readed;
+  long   fsize, readed;
   double *wrapped, *quality;
-  int     phdim;
+  size_t phdim;
 
   if (argc != 4) {
     printf("Usage: test_unwrap <phname> <qualityname> <resname>.\n");
     return -1;
   }
     
-  fname   = argv[1];
+  fname    = argv[1];
   qualname = argv[2];
-  resname = argv[3];
+  resname  = argv[3];
 
   // Read the phase to be unwrapped
   printf("Reading file %s...\n", fname);
@@ -65,9 +65,6 @@ int main(int argc, char *argv[])
   fsize = ftell(stream); // get current file pointer
   fseek(stream, 0, SEEK_SET); // seek back to beginning of file
 
-  printf("File size %ld, dimension %f\n", fsize, sqrt(fsize/8.));
-  phdim = sqrt(fsize/8.);
-
   // Check if the file size makes sense
   if (fabs(sqrt(fsize/8.) - round(sqrt(fsize/8.))) > 1e-9) {
     printf("The phase array needs to be a square matrix in double format.\n");
@@ -75,12 +72,16 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  wrapped  = calloc(fsize, sizeof(char));
-  quality  = calloc(fsize, sizeof(char));
+  printf("File size %ld, dimension %g\n", fsize, sqrt(fsize/8.));
+  phdim = (size_t) sqrt(fsize/8.);
 
+  // wrapped and quality are of type double, but data is read as char
+  wrapped  = (double *) calloc(fsize, sizeof(char));
+  quality  = (double *) calloc(fsize, sizeof(char));
+
+  // Read in data
   fread(wrapped, sizeof(char), fsize, stream);
   fclose(stream);
-
 
   stream = fopen(qualname, "rb");  
   if (stream == NULL) {

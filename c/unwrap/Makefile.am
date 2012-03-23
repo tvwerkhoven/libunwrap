@@ -5,6 +5,6 @@ include $(top_srcdir)/common.mk
 
 noinst_LIBRARIES = libunwrap.a
 
-libunwrap_a_SOURCES = libunwrap.c
+libunwrap_a_SOURCES = libunwrap.cc
 
 noinst_HEADERS = libunwrap.h

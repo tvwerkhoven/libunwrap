@@ -23,8 +23,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <algorithm>
+
 #include "libunwrap.h"
 #include "debugprint.h"
+
+using namespace std;
 
 #ifndef M_PI
 #define M_PI 3.141592653589793238462643383279502884197169399
@@ -126,9 +130,9 @@ DEBUGPRINT("ph: 0x%p, quality: 0x%p, phx: %ld, phy: %ld\n", ph, quality, phx, ph
   uwd.phx    = phx;
   uwd.phy    = phy;
   uwd.nel    = phx * phy;
-  uwd.doneMask = calloc(phx*phy, sizeof( *(uwd.doneMask) ));
-  uwd.borderListPrevs = calloc(phx*phy, sizeof( *(uwd.borderListPrevs) ));
-  uwd.borderListNexts = calloc(phx*phy, sizeof( *(uwd.borderListPrevs) ));
+  uwd.doneMask = (int *) calloc(phx*phy, sizeof( *(uwd.doneMask) ));
+  uwd.borderListPrevs = (size_t *) calloc(phx*phy, sizeof( *(uwd.borderListPrevs) ));
+  uwd.borderListNexts = (size_t *) calloc(phx*phy, sizeof( *(uwd.borderListPrevs) ));
   uwd.borderListFirst = -1; // No border
   for (i=0; i<phx*phy; i++) {
     uwd.borderListPrevs[i] = -1; // point to nil
@@ -159,8 +163,8 @@ DEBUGPRINT("found maximum at %ld, or (%ld, %ld)\n", maxi, neighx, neighy);
     floodborder_add(&uwd, neighx, neighy);
 
     // Check if some points need to be removed from the flooding border
-    for (i1=max(0, neighx-1); i1<=min(neighx+1, phx); i1++) {
-      for (i2=max(0,neighy-1); i2<=min(neighy+1, phy); i2++) {
+    for (i1=max(size_t(1), neighx)-1; i1<=min(neighx+1, phx); i1++) {
+      for (i2=max(size_t(1), neighy)-1; i2<=min(neighy+1, phy); i2++) {
         // Removes a point from the flooding border, if the point
         // has no potential neighbors
         floodborder_remove(&uwd, quality, i1, i2);
@@ -216,8 +220,8 @@ double valid_neighs_getmean(size_t po1, size_t po2, const double * const ph, con
 
   // Loop over all neighbours of point (po1, po2). For all neighbours with 
   // doneMask equal to 1, sum the values.
-  for (i1=max(0, po1-1); i1<=min(po1+1, phx); i1++) {
-    for (i2=max(0,po2-1); i2<=min(po2+1, phy); i2++) {
+  for (i1=max(size_t(1), po1)-1; i1<=min(po1+1, phx); i1++) {
+    for (i2=max(size_t(1), po2)-1; i2<=min(po2+1, phy); i2++) {
       if (doneMask[i1 + i2*phx] == 1) {
         meaval += ph[i1 + i2*phx];
         inds++;
@@ -282,8 +286,8 @@ void floodborder_remove(unwrapqdata_t *uwd, const double *quality, size_t pox, s
 
   // Point is removed, if all the neighboring points are done, or if
   // they contain no phase information.
-  for (i1 = max(0, pox-1); i1<=min(pox+1, uwd->phx); i1++) {
-    for (i2 = max(0, poy-1); i2<=min(poy+1, uwd->phy); i2++) {
+  for (i1 = max(size_t(1), pox)-1; i1<=min(pox+1, uwd->phx); i1++) {
+    for (i2 = max(size_t(1), poy)-1; i2<=min(poy+1, uwd->phy); i2++) {
       if (uwd->doneMask[i1 + i2*uwd->phx] == 0 &&
           quality[i1 + i2*uwd->phx] > 0) {
         unfinished = 1;
@@ -337,8 +341,8 @@ size_t floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality,
 
 
     // Enumerate neighbors
-    for (i1=max(0, po1-1); i1<=min(po1+1, uwd->phx); i1++) {
-      for (i2=max(0, po2-1); i2<=min(po2+1, uwd->phy); i2++) {
+    for (i1=max(size_t(1), po1)-1; i1<=min(po1+1, uwd->phx); i1++) {
+      for (i2=max(size_t(1), po2)-1; i2<=min(po2+1, uwd->phy); i2++) {
         if (uwd->doneMask[i1 + i2*uwd->phx] == 0 &&
             quality[i1 + i2*uwd->phx] > maxQuality) {
           maxQuality = quality[i1 + i2*uwd->phx];
