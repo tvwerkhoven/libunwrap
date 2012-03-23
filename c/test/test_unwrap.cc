@@ -44,9 +44,11 @@ int main(int argc, char *argv[])
   size_t phdim;
 
   if (argc != 4) {
-    printf("Usage: test_unwrap <phname> <qualityname> <resname>.\n");
+    printf("Usage: %s <phname> <qualityname> <resname>.\n", argv[0]);
     return -1;
   }
+  
+  //! @todo Add option to auto-generate wrapped phase and quality, then test routine
     
   fname    = argv[1];
   qualname = argv[2];
