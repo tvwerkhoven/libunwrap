@@ -94,11 +94,6 @@ static PyObject *libunwrap_flood_quality(PyObject *self, PyObject *args) {
   
   DEBUGPRINT("#dim: %d, dims: %d, %d, size: %d\n", nd, ph_w, ph_h, ph_w*ph_h);
 
-  if (ph_w != ph_h) {
-    PyErr_SetString(PyExc_RuntimeError, "In floodfill: need square input data.");
-    return NULL;
-  }
-
   switch (PyArray_TYPE((PyObject *) phase)) {
 		case (NPY_FLOAT64): {
       DEBUGPRINT("%s\n", "NPY_FLOAT64");
