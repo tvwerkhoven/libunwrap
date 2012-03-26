@@ -1,0 +1,20 @@
+TESTING -- log for test results
+
+* 20120326 -- Tim
+
+Testing speed for -O0 and -O3:
+
+With -O3:
+[tim@Saturn] test% time ./unwrap-test pyfa_debug_phase_488_488.dat pyfa_debug_amp_488_488.dat pyfa_debug_out.dat
+Reading file pyfa_debug_phase_488_488.dat...
+File size 1905152, dimension 488.000000
+Unwrapping...
+real 124.957	user 123.214	sys 0.291	pcpu 98.84
+
+With -O0
+[tim@Saturn] test% time ./unwrap-test pyfa_debug_phase_488_488.dat pyfa_debug_amp_488_488.dat pyfa_debug_out.dat
+Reading file pyfa_debug_phase_488_488.dat...
+File size 1905152, dimension 488.000000
+Unwrapping...
+real 147.469	user 146.374	sys 0.342	pcpu 99.49
+
