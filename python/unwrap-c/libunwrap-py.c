@@ -114,7 +114,7 @@ static PyObject *libunwrap_floodfill(PyObject *self, PyObject *args) {
       double *qual64 = (double *) PyArray_DATA(qual64_obj);
       
       // Got data, call floodfill now
-      unwrap_quality(ph_uw, qual64, ph_w);
+      unwrap_flood_quality(ph_uw, qual64, ph_w);
       
       // We don't need a quality map reference anymore
       Py_DECREF(qual64_obj);
