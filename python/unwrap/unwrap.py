@@ -87,6 +87,12 @@ class TestSanityCheck(unittest.TestCase):
 			plt.colorbar()
 
 			plt.figure()
+			plt.title("Quality map")
+			plt.imshow(self.qualmap)
+			plt.colorbar()
+			print N.argmax(self.qualmap), N.max(self.qualmap), N.argwhere(self.qualmap == self.qualmap.max())
+
+			plt.figure()
 			plt.title("Wrapped phase")
 			plt.imshow(self.phase_wr)
 			plt.colorbar()
