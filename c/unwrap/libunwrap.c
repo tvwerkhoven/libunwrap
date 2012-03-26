@@ -131,35 +131,39 @@ void unwrap_flood_quality(double *ph, const double *quality, int phdim)
     uwd.borderListPrevs[i] = -1; // point to nil
     uwd.borderListNexts[i] = -1; // point to nil
   }
-    
   
-  // First starting point
+  // First starting point: start with the pixel with the highest quality
   maxi = findmax(quality, phdim*phdim);
   uwd.doneMask[maxi] = 1;
   neighbo1 = maxi % phdim;
   neighbo2 = maxi / phdim;
+  // This point (neighbo1, neighbo2) is now unwrapped, add to the border list
   floodborder_add(&uwd, neighbo1, neighbo2);
   
+  // Find the neighbor of the border of the unwrapped phase with the highest quality
   while (floodborder_findmaxneighbor(&uwd, quality, &neighbo1, &neighbo2) >= 0) {
+    // Pixel under study: neighbo1, neighbo2
     
-    // Is it necessary to wrap the neighboring point?
+    // If the phase of the current testpixel differs more than pi from the unwrapped pixels, we need to unwrap the current pixel
     meaval = valid_neighs_getmean(neighbo1, neighbo2, ph, uwd.doneMask, phdim);
     thestep = meaval - ph[neighbo1+neighbo2*phdim];
     if (fabs(thestep) > M_PI) {
       ph[neighbo1 + phdim*neighbo2] += 2*M_PI*round(thestep/(2*M_PI));
     }
+    // Pixel is now unwrapped, mark as completed
     uwd.doneMask[neighbo1 + phdim*neighbo2] = 1;
     
     // The new neighboring point needs to be added to the flooding border
     floodborder_add(&uwd, neighbo1, neighbo2);
 
-    // Check if some points need to be removed from the flooding border
+    // When enough pixels are unwrapped, some unwrapped pixels are not at the 
+    // border anymore, remove these from the list to prevent needless computations
     for (i1=neighbo1-1; i1<=neighbo1+1; i1++) {
       if (i1>=0 && i1 < phdim) {
         for (i2=neighbo2-1; i2<=neighbo2+1; i2++) {
           if (i2>=0 && i2 < phdim) {
-            // Removes a point from the flooding border, if the point
-            // has no potential neighbors
+            // Removes a point from the flooding border, if all neighbors are 
+            // already unwrapped.
             floodborder_remove(&uwd, quality, i1, i2);
           }
         }
@@ -347,7 +351,7 @@ int floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality,
         for (i2=po2-1; i2<=po2+1; i2++) {
           if (i2>=0 && i2 < uwd->phdim) {
             if (uwd->doneMask[i1 + i2*uwd->phdim] == 0 &&
-          quality[i1 + i2*uwd->phdim] > maxQuality) {
+                quality[i1 + i2*uwd->phdim] > maxQuality) {
               maxQuality = quality[i1 + i2*uwd->phdim];
               *maxpo1 = i1;
               *maxpo2 = i2;
