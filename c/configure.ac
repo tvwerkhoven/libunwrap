@@ -12,7 +12,7 @@ AM_INIT_AUTOMAKE([AC_PACKAGE_NAME], [AC_PACKAGE_VERSION])
 AC_COPYRIGHT([Copyright (C) 2012 Tim van Werkhoven <werkhoven@strw.leidenuniv.nl>, Visa Korkiakoski <korkiakoski@strw.leidenuniv.nl>])
 AC_REVISION([0.1])
 
-AC_CONFIG_SRCDIR(unwrap/libunwrap.c)
+AC_CONFIG_SRCDIR(unwrap/libunwrap.cc)
 AC_CONFIG_HEADERS(unwrap/autoconfig.h)
 
 AC_CONFIG_FILES([
@@ -25,10 +25,13 @@ AC_GNU_SOURCE
 
 AC_PROG_CPP
 AC_PROG_CC
+AC_PROG_CXXCPP
 AC_PROG_CXX
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 AC_PROG_RANLIB
+
+AC_LANG(C++)
 
 PKG_PROG_PKG_CONFIG
 
@@ -39,12 +42,6 @@ AC_SEARCH_LIBS([sin],
 		[m],
 		[],
 		[AC_MSG_ERROR([Cannot build libunwrap! Missing libm!])])
-
-AC_SEARCH_LIBS([pthread_create],
-		[pthread],
-		[],
-		[AC_MSG_ERROR([Cannot build libunwrap! Missing pthread!])])
-
 
 ### Check command-line options
 

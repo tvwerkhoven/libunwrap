@@ -46,7 +46,7 @@
 
 static PyMethodDef LibunwrapMethods[] = {
 	{"helloworld",  libunwrap_helloworld, METH_VARARGS, "Hello World routine."},
-	{"floodfill",  libunwrap_floodfill, METH_VARARGS, "Flood-fill unwrap."},
+	{"flood_quality",  libunwrap_flood_quality, METH_VARARGS, "Quality guided flood-fill unwrap."},
 	{NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
@@ -68,7 +68,7 @@ static PyObject * libunwrap_helloworld(PyObject *self, PyObject *args) {
   return Py_None; 
 }
 
-static PyObject *libunwrap_floodfill(PyObject *self, PyObject *args) {
+static PyObject *libunwrap_flood_quality(PyObject *self, PyObject *args) {
   PyArrayObject* phase;     // Wrapped input phase
   PyArrayObject* qual;      // Quality map
   
@@ -94,11 +94,6 @@ static PyObject *libunwrap_floodfill(PyObject *self, PyObject *args) {
   
   DEBUGPRINT("#dim: %d, dims: %d, %d, size: %d\n", nd, ph_w, ph_h, ph_w*ph_h);
 
-  if (ph_w != ph_h) {
-    PyErr_SetString(PyExc_RuntimeError, "In floodfill: need square input data.");
-    return NULL;
-  }
-
   switch (PyArray_TYPE((PyObject *) phase)) {
 		case (NPY_FLOAT64): {
       DEBUGPRINT("%s\n", "NPY_FLOAT64");
@@ -114,7 +109,7 @@ static PyObject *libunwrap_floodfill(PyObject *self, PyObject *args) {
       double *qual64 = (double *) PyArray_DATA(qual64_obj);
       
       // Got data, call floodfill now
-      unwrap_flood_quality(ph_uw, qual64, ph_w);
+      unwrap_flood_quality(ph_uw, qual64, ph_w, ph_h);
       
       // We don't need a quality map reference anymore
       Py_DECREF(qual64_obj);
