@@ -172,8 +172,8 @@ DEBUGPRINT("found maximum at %ld, or (%ld, %ld)\n", maxi, neighx, neighy);
     floodborder_add(&uwd, neighx, neighy);
 
     // Check if some points need to be removed from the flooding border
-    for (i1=max(size_t(1), neighx)-1; i1<=min(neighx+1, dim1); i1++) {
-      for (i2=max(size_t(1), neighy)-1; i2<=min(neighy+1, dim2); i2++) {
+    for (i1=max(size_t(1), neighx)-1; i1<min(neighx+2, dim1); i1++) {
+      for (i2=max(size_t(1), neighy)-1; i2<min(neighy+2, dim2); i2++) {
         // Removes a point from the flooding border, if the point
         // has no potential neighbors
         floodborder_remove(&uwd, quality, i1, i2);
@@ -423,8 +423,8 @@ void floodborder_remove(unwrapqdata_t *uwd, const double *quality, size_t pox, s
 
   // Point is removed, if all the neighboring points are done, or if
   // they contain no phase information.
-  for (size_t i1 = max(size_t(1), pox)-1; i1<=min(pox+1, uwd->dim1); i1++) {
-    for (size_t i2 = max(size_t(1), poy)-1; i2<=min(poy+1, uwd->dim2); i2++) {
+  for (size_t i1 = max(size_t(1), pox)-1; i1<min(pox+2, uwd->dim1); i1++) {
+    for (size_t i2 = max(size_t(1), poy)-1; i2<min(poy+2, uwd->dim2); i2++) {
       if (uwd->doneMask[i1 + i2*uwd->dim1] == 0 &&
           quality[i1 + i2*uwd->dim1] > 0) {
         unfinished = 1;
@@ -484,8 +484,8 @@ ssize_t floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality,
     po2 = curIndex / uwd->dim1;
 
     // Enumerate neighbors
-    for (size_t i1 = max(size_t(1), po1)-1; i1<=min(po1+1, uwd->dim1); i1++) {
-      for (size_t i2 = max(size_t(1), po2)-1; i2<=min(po2+1, uwd->dim2); i2++) {
+    for (size_t i1 = max(size_t(1), po1)-1; i1<min(po1+2, uwd->dim1); i1++) {
+      for (size_t i2 = max(size_t(1), po2)-1; i2<min(po2+2, uwd->dim2); i2++) {
         if (uwd->doneMask[i1 + i2*uwd->dim1] == 0 &&
             quality[i1 + i2*uwd->dim1] > maxQuality) {
           maxQuality = quality[i1 + i2*uwd->dim1];
