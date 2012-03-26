@@ -44,11 +44,11 @@ def __check_sanity(data, ndim=2, dtlist=[N.float]):
 class TestSanityCheck(unittest.TestCase):
 	def setUp(self):
 		"""Generate fake phase"""
-		self.sz = (257, 367)
+		self.sz = (33, 57)
 		self.verb = 2
 		grid = N.indices(self.sz, dtype=N.float) / N.r_[self.sz].reshape(-1,1,1)
 		# Random phase
-		self.phase = N.sin(grid[0] * N.pi * 2)*3. + N.cos(grid[1] * N.pi * 8)*4.
+		self.phase = N.sin(grid[0] * N.pi)*3. + N.cos(grid[1] * N.pi * 2)*4.
 		# Wrapped phase
 		self.phase_wr = (self.phase % (2*N.pi)) - N.pi
 		# Quality map
