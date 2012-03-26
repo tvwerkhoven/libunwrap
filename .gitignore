@@ -5,6 +5,7 @@ paskaa.c
 
 # Binaries
 c/unwrap/test_unwrap
+c/test/heap-test
 
 *.mat
 *.raw
