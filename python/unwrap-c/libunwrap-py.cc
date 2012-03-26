@@ -88,11 +88,11 @@ static PyObject *libunwrap_flood_quality(PyObject *self, PyObject *args) {
 
   // Inspect array dimensions
   int nd = PyArray_NDIM(phase);
-  int ph_w = (int) PyArray_DIM((PyObject*) phase, 0);
-	int ph_h = (int) PyArray_DIM((PyObject*) phase, 1);
+  int ph_0 = (int) PyArray_DIM((PyObject*) phase, 0);
+	int ph_1 = (int) PyArray_DIM((PyObject*) phase, 1);
 
   
-  DEBUGPRINT("#dim: %d, dims: %d, %d, size: %d\n", nd, ph_w, ph_h, ph_w*ph_h);
+  DEBUGPRINT("#dim: %d, dims: %d, %d, size: %d\n", nd, ph_0, ph_1, ph_0*ph_1);
 
   switch (PyArray_TYPE((PyObject *) phase)) {
 		case (NPY_FLOAT64): {
@@ -108,8 +108,8 @@ static PyObject *libunwrap_flood_quality(PyObject *self, PyObject *args) {
       double *ph_uw = (double *) PyArray_DATA(ph_unwrap_obj);
       double *qual64 = (double *) PyArray_DATA(qual64_obj);
       
-      // Got data, call floodfill now
-      unwrap_flood_quality(ph_uw, qual64, ph_w, ph_h);
+      // Got data, call floodfill now. We reverse the dimensions (why?)
+      unwrap_flood_quality(ph_uw, qual64, ph_1, ph_0);
       
       // We don't need a quality map reference anymore
       Py_DECREF(qual64_obj);
