@@ -1,6 +1,6 @@
 TESTING -- log for test results
 
-* 20120326 -- Tim
+* 20120326 -- Tim, tested on master with linked-list algo
 
 Testing speed for -O0 and -O3:
 
