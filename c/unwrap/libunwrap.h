@@ -36,28 +36,40 @@ extern int     g_usedonemask;
  */
 typedef struct {
   int  *doneMask;     //!< Mask counting the pixels that are already unwrapped 
-  int   phdim;        //!< Dimension of the phase
-  int   listsz;       //!< Number of elements in the list
-  int   unwcount;     //!< Number of unwrapped points
 
-  int  *borderListPrevs; //!< Array contining indexes to the previous nodes in the list linking the border pixels. Has same dimension as the phase.
+  size_t dim1;         //!< Width of the phase
+  size_t dim2;         //!< Height of the phase
+  size_t nel;         //!< Number of pixels in phasemap
+  size_t listsz;       //!< Number of elements in the list
+  size_t unwcount;     //!< Number of unwrapped points
 
-  int  *borderListNexts; //!< Array contining indexes to the next nodes in the list linking the border pixels. Has same dimension as the phase
+  ssize_t *borderListPrevs; //!< Array contining indexes to the previous nodes in the list linking the border pixels. Has same dimension as the phase.
 
-  int   borderListFirst; //!< Index to the first node in the list linking the border pixels. */
+  ssize_t *borderListNexts; //!< Array contining indexes to the next nodes in the list linking the border pixels. Has same dimension as the phase
+
+  ssize_t  borderListFirst; //!< Index to the first node in the list linking the border pixels. */
 } unwrapqdata_t;
+
+
+
 
 
 void unwrap_flood(int po1, int po2, int itco);
 
-void unwrap_flood_quality(double *ph, const double *quality, int phdim);
+void unwrap_flood_quality_slow(double *ph, const double *quality, size_t dim1, size_t dim2);
+void unwrap_flood_quality(     double *ph, const double *quality, ssize_t dim1, ssize_t dim2);
+
 
 // These functions are used internally 
-int findmax(const double *arr, int len);
-double valid_neighs_getmean(int po1, int po2, double *ph, int *doneMask, int phdim);
-void floodborder_add(unwrapqdata_t *uwd, int po1, int po2);
-void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int po2);
-int floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
-				int *maxpo1, int *maxpo2);
+size_t findmax(const double *arr, size_t len);
+
+double valid_neighs_getmean(size_t po1, size_t po2, const double * const ph, const int * const doneMask, size_t phx, size_t phy);
+
+void floodborder_add(unwrapqdata_t *uwd, size_t pox, size_t poy);
+
+void floodborder_remove(unwrapqdata_t *uwd, const double *quality, size_t pox, size_t poy);
+
+ssize_t floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
+                                   size_t *maxpo1, size_t *maxpo2);
 
 #endif // HAVE_LINBUNWRAP_H

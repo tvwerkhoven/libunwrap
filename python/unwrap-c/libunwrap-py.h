@@ -23,6 +23,6 @@ http://creativecommons.org/licenses/by-sa/3.0/
 #include <numpy/arrayobject.h> 	// For numpy
 
 static PyObject *libunwrap_helloworld(PyObject *self, PyObject *args);
-static PyObject *libunwrap_floodfill(PyObject *self, PyObject *args);
+static PyObject *libunwrap_flood_quality(PyObject *self, PyObject *args);
 
 #endif // HAVE_LIBUNWRAP_PY_H
