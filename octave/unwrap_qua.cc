@@ -20,10 +20,8 @@
 #include "string.h"
 #include "oct.h"
 
-extern "C"
-{
 #include "libunwrap.h"
-}  /* end extern "C" */
+
 
 
 
@@ -38,7 +36,8 @@ DEFUN_DLD(unwrap_qua, args, nargout,
 {
   const double  *phsm;
   const double  *qua;
-  int      phdim;
+  int      phdim1, phdim2;
+  int      dim1, dim2;
   double  *wrapped;
 
   int nargin = args.length();
@@ -53,13 +52,8 @@ DEFUN_DLD(unwrap_qua, args, nargout,
     error("Phase needs to be a matrix.");
     return octave_value_list();
   }
-  int dim1 = (args(0).dims())(0);
-  int dim2 = (args(0).dims())(1);
-  if (ndims != 2 || dim1!= dim2) {
-    error("Phase needs to be a square matrix.");
-    return octave_value_list();
-  }
-  phdim = dim1;
+  phdim1 = (args(0).dims())(0);
+  phdim2 = (args(0).dims())(1);
 
   ndims = args(1).dims().length();
   if (ndims != 2) {
@@ -68,21 +62,17 @@ DEFUN_DLD(unwrap_qua, args, nargout,
   }
   dim1 = (args(1).dims())(0);
   dim2 = (args(1).dims())(1);
-  if (dim1!= dim2) {
-    error("Quality needs to be a square matrix.");
-    return octave_value_list();
-  }
-  if (phdim != dim1) {
-    error("Pupil needs same dimension.");
+  if (phdim1 != dim1  ||  phdim2 != dim2) {
+    error("Quality needs the same dimension as phase.");
     return octave_value_list();
   }
 
   phsm = args(0).array_value().data();
   qua  = args(1).array_value().data();
   
-  Matrix mxWrapped = Matrix(phdim, phdim);
+  Matrix mxWrapped = Matrix(phdim1, phdim2);
   wrapped = mxWrapped.fortran_vec();
-  memcpy(wrapped, phsm, sizeof(double)*phdim*phdim);
+  memcpy(wrapped, phsm, sizeof(double)*phdim1*phdim2);
 
 #if(0)
   octave_stdout << "phsm: " << phsm <<"\n";
@@ -91,7 +81,7 @@ DEFUN_DLD(unwrap_qua, args, nargout,
 #endif
 
   // Start the recursive unwrapping
-  unwrap_flood_quality(wrapped, qua, phdim);
+  unwrap_flood_quality(wrapped, qua, phdim1, phdim2);
 
   return octave_value(mxWrapped);
 } // unwrap_qua
