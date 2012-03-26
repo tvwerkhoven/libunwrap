@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
   FILE   *stream;
   long   fsize=0, readed=0;
   double *wrapped, *quality;
-  size_t phdim=0;
+  ssize_t phdim1=0, phdim2=0;
   bool gendata = false;
 
 
@@ -60,26 +60,30 @@ int main(int argc, char *argv[])
     printf("Running %s, auto-generating data, storing to %s.\n", argv[0], resname);
   }
   // 4 arguments: we get input data
-  else if (argc == 4) {
+  else if (argc == 6) {
     fname    = argv[1];
     qualname = argv[2];
     resname  = argv[3];
+    phdim1   = atoi(argv[4]);
+    phdim2   = atoi(argv[5]);
     printf("Running %s, phase: %s, quality: %s, storing to %s.\n", argv[0], fname, qualname, resname);
+    printf("Dimensions: %ld x %ld\n", phdim1, phdim2);
   }
   else {
-    printf("Usage:\n%s <phname> <qualityname> <resname>.\nOR\n", argv[0]);
+    printf("Usage:\n%s <phname> <qualityname> <resname> <dim1> <dim2>.\nOR\n", argv[0]);
     printf("%s <resname>.\n", argv[0]);
     return -1;
   }
   
   if (gendata) {
-    phdim = 257;
+    phdim1 = 257;
+    phdim2 = 257;
 
-    printf("Generating test data (phdim %ld)...\n", phdim);
+    printf("Generating test data (phdim: %ld x %ld)...\n", phdim1, phdim2);
     
     // Allocate memory for quality and phase
-    wrapped  = (double *) malloc(phdim * phdim * sizeof(*wrapped));
-    quality  = (double *) malloc(phdim * phdim * sizeof(*quality));
+    wrapped  = (double *) malloc(phdim1 * phdim2 * sizeof(*wrapped));
+    quality  = (double *) malloc(phdim1 * phdim2 * sizeof(*quality));
     
     // Randomly generate phase and quality
 //    for (size_t i0=0; i0<phdim; i0++) {
@@ -89,10 +93,10 @@ int main(int argc, char *argv[])
 //      }
 //    }
     // Smooth test data (like in Python)
-    for (size_t i0=0; i0<phdim; i0++) {
-      for (size_t i1=0; i1<phdim; i1++) {
-        wrapped[i0 + i1*phdim] = sin(M_PI*2.0*i0/phdim)*3.0 + cos(M_PI*8.0*i0/phdim)*4.0;
-        quality[i0 + i1*phdim] = i0 + i1;
+    for (ssize_t i0=0; i0<phdim1; i0++) {
+      for (ssize_t i1=0; i1<phdim2; i1++) {
+        wrapped[i0 + i1*phdim1] = sin(M_PI*2.0*i0/phdim1)*3.0 + cos(M_PI*8.0*i0/phdim1)*4.0;
+        quality[i0 + i1*phdim1] = i0 + i1;
       }
     }
   }
@@ -111,14 +115,12 @@ int main(int argc, char *argv[])
     fseek(stream, 0, SEEK_SET); // seek back to beginning of file
     
     // Check if the file size makes sense
-    if (fabs(sqrt(fsize/8.) - round(sqrt(fsize/8.))) > 1e-9) {
-      printf("The phase array needs to be a square matrix in double format.\n");
+    if (fabs(phdim1*phdim2*sizeof(double) - fsize) > 0) {
+      printf("Given dimensions (%ld, %ld ==> %ld) and the phase array disk (%ld) size do not match.\n", 
+	     phdim1, phdim2, phdim1*phdim2*sizeof(double), fsize);
       fclose(stream);
       return -1;
     }
-    
-    printf("File size %ld, dimension %g\n", fsize, sqrt(fsize/8.));
-    phdim = (size_t) sqrt(fsize/8.);
     
     // wrapped and quality are of type double, but data is read as char
     wrapped  = (double *) calloc(fsize, sizeof(char));
@@ -143,11 +145,11 @@ int main(int argc, char *argv[])
   printf("Unwrapping...\n");
 
   // Do the recursive unwrap
-  unwrap_flood_quality(wrapped, quality, phdim, phdim);
+  unwrap_flood_quality(wrapped, quality, phdim1, phdim2);
   
   // Save result
   stream = fopen(resname, "wb");
-  fwrite(wrapped, sizeof(*wrapped), phdim*phdim, stream);
+  fwrite(wrapped, sizeof(*wrapped), phdim1*phdim2, stream);
   fclose(stream);
 
   free(wrapped);
