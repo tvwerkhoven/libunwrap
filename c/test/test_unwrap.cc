@@ -47,9 +47,9 @@ int main(int argc, char *argv[])
 {
   char   *fname, *qualname, *resname;
   FILE   *stream;
-  long   fsize, readed;
+  long   fsize=0, readed=0;
   double *wrapped, *quality;
-  size_t phdim;
+  size_t phdim=0;
   bool gendata = false;
 
 
@@ -74,6 +74,8 @@ int main(int argc, char *argv[])
   
   if (gendata) {
     phdim = 257;
+
+    printf("Generating test data (phdim %ld)...\nOR\n", phdim);
     
     // Allocate memory for quality and phase
     wrapped  = (double *) malloc(phdim * phdim * sizeof(*wrapped));
@@ -145,7 +147,7 @@ int main(int argc, char *argv[])
   
   // Save result
   stream = fopen(resname, "wb");
-  fwrite(wrapped, sizeof(char), fsize, stream);
+  fwrite(wrapped, sizeof(*wrapped), phdim*phdim, stream);
   fclose(stream);
 
   free(wrapped);
