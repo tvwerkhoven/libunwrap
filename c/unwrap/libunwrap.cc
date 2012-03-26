@@ -276,12 +276,18 @@ DEBUGPRINT("ph: 0x%p, quality: 0x%p, dim1: %ld, dim2: %ld\n", ph, quality, dim1,
     po1 = maxi % dim1;
     po2 = maxi / dim1;
     
+    // Remove the added point from the border
+    Adjoint.pop();
+    borderMask[maxi] = 0;
+
     // Is it necessary to wrap it?
     meaval = valid_neighs_getmean(po1, po2, ph, doneMask, dim1, dim2);
     thestep = meaval - ph[po1 + po2*dim1];
     if (fabs(thestep) > M_PI) {
       ph[po1 + po2*dim1] += 2.0 * M_PI * round(thestep/(2*M_PI));
     }
+
+    // printf("adding (%d,%d), meaval=%f, step=%f\n", po1, po2, meaval, thestep);
     
     // Pixel is now unwrapped, mark as completed
     doneMask[po1 + po2*dim1] = 1;
@@ -304,10 +310,6 @@ DEBUGPRINT("ph: 0x%p, quality: 0x%p, dim1: %ld, dim2: %ld\n", ph, quality, dim1,
     if (po2+1 < dim2 && borderMask[ind4]==0 && doneMask[ind4]==0 && quality[ind4]>0) {
       Adjoint.push(ind4);  borderMask[ind4]=1; 
     }
-
-    // Remove the added point from the border
-    Adjoint.pop();
-    borderMask[maxi] = 0;
 
   } // flooding border has valid neighbors
 
