@@ -18,3 +18,23 @@ File size 1905152, dimension 488.000000
 Unwrapping...
 real 147.469	user 146.374	sys 0.342	pcpu 99.49
 
+After implementing heap-based unwrapping:
+
+With -O0
+[tim@Saturn] test% time ./unwrap-test pyfa_debug_phase_488_488.dat pyfa_debug_amp_488_488.dat pyfa_debug_out.dat 488 488
+Running ./unwrap-test, phase: pyfa_debug_phase_488_488.dat, quality: pyfa_debug_amp_488_488.dat, storing to pyfa_debug_out.dat.
+Dimensions: 488 x 488
+Reading file pyfa_debug_phase_488_488.dat...
+Unwrapping...
+
+real 0.512	user 0.368	sys 0.011	pcpu 73.87
+
+With -O3:
+[tim@Saturn] test% time ./unwrap-test pyfa_debug_phase_488_488.dat pyfa_debug_amp_488_488.dat pyfa_debug_out.dat 488 488
+Running ./unwrap-test, phase: pyfa_debug_phase_488_488.dat, quality: pyfa_debug_amp_488_488.dat, storing to pyfa_debug_out.dat.
+Dimensions: 488 x 488
+Reading file pyfa_debug_phase_488_488.dat...
+Unwrapping...
+
+real 0.066	user 0.055	sys 0.009	pcpu 97.08
+
