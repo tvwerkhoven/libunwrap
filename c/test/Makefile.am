@@ -7,11 +7,13 @@ include $(top_srcdir)/common.mk
 
 AM_CXXFLAGS += -I${top_srcdir}/unwrap/ -L${top_srcdir}/unwrap/
 
-noinst_PROGRAMS = unwrap-test
+noinst_PROGRAMS = unwrap-test heap-test
 
 unwrap_test_SOURCES = test_unwrap.cc
 unwrap_test_LDADD = ${top_srcdir}/unwrap/libunwrap.a \
     $(LDADD)
+
+heap_test_SOURCES = test_heap.cc
 
 endif WITH_TESTING
 
