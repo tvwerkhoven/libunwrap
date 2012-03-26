@@ -66,6 +66,7 @@ int main() {
   fourth.push(20);
   fourth.push(1);
 
+  fprintf(stderr, "Empty at init?: %d\n", Adjoint.empty());
   Adjoint.push(7);
   fprintf(stderr, "Top: %d\n", Adjoint.top());
   Adjoint.push(8);
@@ -75,13 +76,13 @@ int main() {
   
   
   // Pop values
-  fprintf(stderr, "pop & top: %d\n", Adjoint.top());
+  fprintf(stderr, "pop & top: %d (empty?=%d)\n", Adjoint.top(), Adjoint.empty());
   Adjoint.pop();
-  fprintf(stderr, "pop & top: %d\n", Adjoint.top());
+  fprintf(stderr, "pop & top: %d (empty?=%d)\n", Adjoint.top(), Adjoint.empty());
   Adjoint.pop();
-  fprintf(stderr, "pop & top: %d\n", Adjoint.top());
+  fprintf(stderr, "pop & top: %d (empty?=%d)\n", Adjoint.top(), Adjoint.empty());
   Adjoint.pop();
-  fprintf(stderr, "pop & top: %d\n", Adjoint.top());
+  fprintf(stderr, "pop & top: %d (empty?=%d)\n", Adjoint.top(), Adjoint.empty());
 
   return 0;
 }
