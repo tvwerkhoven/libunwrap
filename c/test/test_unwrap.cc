@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
   if (gendata) {
     phdim = 257;
 
-    printf("Generating test data (phdim %ld)...\nOR\n", phdim);
+    printf("Generating test data (phdim %ld)...\n", phdim);
     
     // Allocate memory for quality and phase
     wrapped  = (double *) malloc(phdim * phdim * sizeof(*wrapped));
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
     fclose(stream);
   }
   
-  printf("Unwrapping...");
+  printf("Unwrapping...\n");
 
   // Do the recursive unwrap
   unwrap_flood_quality(wrapped, quality, phdim, phdim);
