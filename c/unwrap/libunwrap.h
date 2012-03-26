@@ -37,6 +37,8 @@ extern int     g_usedonemask;
 typedef struct {
   int  *doneMask;     //!< Mask counting the pixels that are already unwrapped 
   int   phdim;        //!< Dimension of the phase
+  int   listsz;       //!< Number of elements in the list
+  int   unwcount;     //!< Number of unwrapped points
 
   int  *borderListPrevs; //!< Array contining indexes to the previous nodes in the list linking the border pixels. Has same dimension as the phase.
 

@@ -123,6 +123,8 @@ void unwrap_flood_quality(double *ph, const double *quality, int phdim)
   double meaval, thestep;
 
   uwd.phdim    = phdim;
+  uwd.listsz   = 0;
+  uwd.unwcount = 0;
   uwd.doneMask = calloc(phdim*phdim, sizeof(int));
   uwd.borderListPrevs = calloc(phdim*phdim, sizeof(int));
   uwd.borderListNexts = calloc(phdim*phdim, sizeof(int));
@@ -135,6 +137,7 @@ void unwrap_flood_quality(double *ph, const double *quality, int phdim)
   // First starting point: start with the pixel with the highest quality
   maxi = findmax(quality, phdim*phdim);
   uwd.doneMask[maxi] = 1;
+  uwd.unwcount++;
   neighbo1 = maxi % phdim;
   neighbo2 = maxi / phdim;
   // This point (neighbo1, neighbo2) is now unwrapped, add to the border list
@@ -152,6 +155,7 @@ void unwrap_flood_quality(double *ph, const double *quality, int phdim)
     }
     // Pixel is now unwrapped, mark as completed
     uwd.doneMask[neighbo1 + phdim*neighbo2] = 1;
+    uwd.unwcount++;
     
     // The new neighboring point needs to be added to the flooding border
     floodborder_add(&uwd, neighbo1, neighbo2);
@@ -261,6 +265,7 @@ void floodborder_add(unwrapqdata_t *uwd, int po1, int po2)
   
   // The added item is first at the list
   uwd->borderListFirst = newIndex;
+  uwd->listsz++;
 } // floodborder_add
 
 
@@ -315,7 +320,7 @@ void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int 
     // Mark this as non-used
     uwd->borderListPrevs[remIndex] = -1;
     uwd->borderListNexts[remIndex] = -1;
-
+    uwd->listsz--;
   } // unfinished ==  0, point to remove
 } // floodborder_remove
 
@@ -326,20 +331,26 @@ void floodborder_remove(unwrapqdata_t *uwd, const double *quality, int po1, int 
   @author Visa Korkiakoski
 
   @param uwd [in, out] unwrapping data structure
-  @param quality [in] quality array (the points where quality is 0, are considered done)
-  @param maxpo1 [in] the point where quality is highest, 1st coordinate
-  @param maxpo2 [in] the point where quality is highest, 2nd coordinate
+  @param quality [in] quality array, should be positive (the points where quality is 0, are considered done)
+  @param maxpo1 [out] the point where quality is highest, 1st coordinate
+  @param maxpo2 [out] the point where quality is highest, 2nd coordinate
   @return the index of (maxpo1, maxpo2), or -1 if no valid maximum is found
  */
 int floodborder_findmaxneighbor(unwrapqdata_t *uwd, const double *quality, 
 				int *maxpo1, int *maxpo2)
 {
   int     curIndex = uwd->borderListFirst;
-  int     po1, po2, i1, i2, maxi=-1;
+  int     po1, po2, i1, i2, maxi=-1, itcount=0;
   double  maxQuality = -1;
 
   // Go through all the neighbors of the borderList
   while (curIndex >= 0) {
+    itcount++;
+    if (itcount > uwd->listsz) {
+      fprintf(stderr, "floodborder_findmaxneighbor() fail: itcount > uwd->listsz, lists broken\n");
+      return -1;
+    }
+    
     // Compute the coordinates corresponding to the index
     po1 = curIndex % uwd->phdim;
     po2 = curIndex / uwd->phdim;
