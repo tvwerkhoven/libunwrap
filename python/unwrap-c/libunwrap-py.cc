@@ -87,9 +87,8 @@ static PyObject *libunwrap_flood_quality(PyObject *self, PyObject *args) {
   DEBUGPRINT("phase: 0x%p, qual: 0x%p\n", phase, qual);
 
   // Inspect array dimensions
-  int nd = PyArray_NDIM(phase);
   int ph_0 = (int) PyArray_DIM((PyObject*) phase, 0);
-	int ph_1 = (int) PyArray_DIM((PyObject*) phase, 1);
+  int ph_1 = (int) PyArray_DIM((PyObject*) phase, 1);
 
   
   DEBUGPRINT("#dim: %d, dims: %d, %d, size: %d\n", nd, ph_0, ph_1, ph_0*ph_1);
@@ -124,3 +123,4 @@ static PyObject *libunwrap_flood_quality(PyObject *self, PyObject *args) {
   
   return Py_BuildValue("N", ph_unwrap_obj);
 }
+
