@@ -79,7 +79,6 @@ class TestSanityCheck(unittest.TestCase):
 	def test2a_flood_qual(self):
 		"""Testing quality guided floodfill unwrapping"""
 		test_uw = flood_quality(self.phase_wr, self.qualmap)
-		test_uw -= test_uw.mean()
 		if (self.verb > 1):
 			plt.figure()
 			plt.title("Original phase")
@@ -101,9 +100,57 @@ class TestSanityCheck(unittest.TestCase):
 			plt.title("Recovered phase")
 			plt.imshow(test_uw)
 			plt.colorbar()
+
 			raw_input()
 
-		self.assertAlmostEqual((test_uw - self.phase).sum(), 0)
+		diff = test_uw - self.phase
+		diff -= diff.mean()
+		self.assertAlmostEqual(diff.sum(), 0)
+
+class TestUnwrap(unittest.TestCase):
+	def setUp(self):
+		"""Generate phase and wrapped phase of shape (257, 509)"""
+		sz = (257, 509)
+		grid = N.indices(sz) *2.5 / N.r_[sz].reshape(-1,1,1)
+		self.phase = ((grid*2.0)**2.0).sum(0)
+		self.phase_wr = self.phase % (2*N.pi)
+		# Flat image to test if unwrap() does not introduce errors
+		self.flat = N.ones(sz)
+
+	# Shallow data tests
+	def test0a_wrapping(self):
+		"""Phase amp should be > 2 pi, wrapped phase amp should be <= 2 pi"""
+		self.assertTrue(self.phase.ptp() > 2*N.pi)
+		self.assertTrue(self.phase_wr.ptp() <= 2*N.pi)
+
+	def test0b_wrapping(self):
+		"""Wrapped phase should be unequal to original phase"""
+		self.assertFalse(N.allclose(self.phase_wr, self.phase))
+		self.assertTrue(self.phase.ptp() > 2*N.pi)
+		self.assertTrue(self.phase_wr.ptp() <= 2*N.pi)
+
+	# Shallow function test
+	def test1a_ret_shape_type(self):
+		"""Return shape and type should be sane"""
+		test_unwr = flood_quality(self.phase_wr, self.flat)
+		self.assertEqual(test_unwr.shape, self.phase.shape)
+		self.assertEqual(test_unwr.dtype, self.phase.dtype)
+
+	# Deep function test
+	def test2a_unwrap(self):
+		"""Unwrapping flat data should do nothing"""
+		test_unwr = flood_quality(self.flat, self.flat)
+		self.assertTrue(N.allclose(test_unwr, self.flat))
+
+	def test2b_unwrap(self):
+		"""Unwrapping original phase should do nothing"""
+		test_unwr = flood_quality(self.phase, self.flat)
+		self.assertTrue(N.allclose(test_unwr, self.phase))
+
+	def test2c_unwrab(self):
+		"""Unwrapped phase should be same as original phase"""
+		test_unwr = flood_quality(self.phase_wr, self.flat)
+		self.assertTrue(N.allclose(test_unwr, self.phase))
 
 
 # This must be the final part of the file, code after this won't be executed
