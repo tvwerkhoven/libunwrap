@@ -18,11 +18,11 @@ EXTRALIBS="C:\Program Files\Microsoft SDKs\Windows\v7.0A\Lib\Gdi32.lib"
 SRC=..\unwrap\libunwrap.cc
 
 CLEAN :
-        -@erase test-unwrap.exe
+        -@erase unwrap-test.exe
 
 
 unwraptest :
-        cl.exe $(INCLUDE) $(SRC) test_unwrap.cc /EHsc /MDd /Zi /Fetest-unwrap.exe
+        cl.exe $(INCLUDE) $(SRC) test_unwrap.cc /EHsc /MDd /Zi /Feunwrap-test.exe
 
 # minterf.lib 
 
