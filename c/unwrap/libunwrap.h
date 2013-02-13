@@ -21,6 +21,11 @@
 #ifndef HAVE_LINBUNWRAP_H
 #define HAVE_LINBUNWRAP_H
 
+// Windows spesific hack
+#ifdef _WIN32
+#define ssize_t size_t
+#endif
+
 // Global variables -- they are used only by the obsolete flood
 // filling routine.
 extern const double *g_pup;
