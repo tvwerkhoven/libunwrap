@@ -15,4 +15,11 @@ Algorithms
 
 The algorithms supplied include:
 
-- Quality-guided flood unwrap
+- Quality-guided flood unwrap (based on peck2010 section 5.1.3, itoh1982)
+
+References
+==========
+
+[peck2010] Interferometry mathematics, algorithms and data (10 February 2010), pp. 1-50 by Michael Peck http://home.earthlink.net/~mlpeck54/astro/imath/imath.pdf
+
+[ioth1982] Analysis of the phase unwrapping algorithm Applied Optics, Vol. 21 (July 1982), 2470, doi:10.1364/ao.21.002470 by K. Itoh
