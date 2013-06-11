@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
     fseek(stream, 0, SEEK_SET); // seek back to beginning of file
     
     // Check if the file size makes sense
-    if (fabs(phdim1*phdim2*sizeof(double) - fsize) > 0) {
+    if (fabs((long double)(phdim1*phdim2*sizeof(double) - fsize)) > 0) {
       printf("Given dimensions (%ld, %ld ==> %ld) and the phase array disk (%ld) size do not match.\n", 
 	     phdim1, phdim2, phdim1*phdim2*sizeof(double), fsize);
       fclose(stream);

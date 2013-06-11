@@ -22,7 +22,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
-
 #include <queue>
 #include <algorithm>
 
@@ -33,6 +32,14 @@ using namespace std;
 
 #ifndef M_PI
 #define M_PI 3.141592653589793238462643383279502884197169399
+#endif
+
+// Unbelievable!!
+#ifdef _WIN32
+inline double round( double d )
+{
+  return floor( d + 0.5 );
+}
 #endif
 
 
